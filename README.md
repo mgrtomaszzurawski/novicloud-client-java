@@ -8,4 +8,4 @@ This is an unofficial, independent project and is not affiliated with or endorse
 Work in progress.
 
 ## License
-GPL-3.0
+AGPL-3.0
