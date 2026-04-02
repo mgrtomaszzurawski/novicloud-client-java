@@ -10,6 +10,28 @@
     <packaging>jar</packaging>
     <name>Java Client for NoviCloud API</name>
     <description>Unofficial Java client for the NoviCloud REST API, generated from modular OpenAPI specification.</description>
+    <url>https://github.com/mgrtomaszzurawski/novicloud-client-java</url>
+
+    <licenses>
+        <license>
+            <name>AGPL-3.0-only</name>
+            <url>https://www.gnu.org/licenses/agpl-3.0.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Tomasz Zurawski</name>
+            <email>mgrtomaszzurawski@gmail.com</email>
+            <url>https://github.com/mgrtomaszzurawski</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/mgrtomaszzurawski/novicloud-client-java.git</connection>
+        <developerConnection>scm:git:ssh://github.com:mgrtomaszzurawski/novicloud-client-java.git</developerConnection>
+        <url>https://github.com/mgrtomaszzurawski/novicloud-client-java</url>
+    </scm>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
