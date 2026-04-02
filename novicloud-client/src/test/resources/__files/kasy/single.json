@@ -1,0 +1,13 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "dane": {
+    "id": 1,
+    "numer": 1,
+    "nazwa": "Register 1",
+    "ecr": "ECR-001",
+    "aktywny": true,
+    "ostatnia_sync": null,
+    "ostatnia_sprzed": "2026-01-15T18:00:00"
+  }
+}

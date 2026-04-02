@@ -1,0 +1,24 @@
+{
+  "mappings": [
+    {
+      "name": "GET stawkivat list",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/stawkivat$" },
+      "response": { "status": 200, "bodyFileName": "stawkivat-list.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "GET stawkivat by id",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/stawkivat/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "stawkivat-single.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "POST stawkivat create",
+      "request": { "method": "POST", "urlPathPattern": "/[^/]+/stawkivat$" },
+      "response": { "status": 201, "bodyFileName": "created.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "DELETE stawkivat by id",
+      "request": { "method": "DELETE", "urlPathPattern": "/[^/]+/stawkivat/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "ok.json", "headers": { "Content-Type": "application/json" } }
+    }
+  ]
+}

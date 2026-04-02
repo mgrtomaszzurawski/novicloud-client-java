@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    SpotBugs exclusion filter for NoviCloud SDK.
+
+    EI_EXPOSE_REP exclusion for NoviCloudClient facade:
+      Resource client objects (AsortyClient, WalutyClient, etc.) are stateless services - all their
+      fields are set once at construction time (accountName, api, objectMapper, timeout, interceptor)
+      and never modified afterwards. Returning them from NoviCloudClient is safe.
+      EI_EXPOSE_REP is designed for truly mutable containers (arrays, Date, ArrayList).
+      Applying it to effectively-immutable service objects is a false positive.
+-->
+<FindBugsFilter>
+    <Match>
+        <Class name="io.github.mgrtomaszzurawski.novicloud.sdk.NoviCloudClient"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+
+
+
+    <!--
+        FlexibleLocalDateTimeDeserializer extends JsonDeserializer which implements Serializable.
+        The class has no mutable instance state - only static formatters. Adding serialVersionUID
+        would be noise; the class will never be serialized.
+    -->
+    <Match>
+        <Class name="io.github.mgrtomaszzurawski.novicloud.sdk.FlexibleLocalDateTimeDeserializer"/>
+        <Bug pattern="SE_NO_SERIALVERSIONID"/>
+    </Match>
+
+    <!--
+        Demo-app runners keep private methods for manual test scenarios (runCreateOnce,
+        runCreateUpdateDelete, runProbeFilters) that are commented out in run() but kept
+        as reusable tools for live API testing. Not dead code - intentional test toolkit.
+    -->
+    <Match>
+        <Package name="io.github.mgrtomaszzurawski.novicloud.demo.runner"/>
+        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+    </Match>
+</FindBugsFilter>

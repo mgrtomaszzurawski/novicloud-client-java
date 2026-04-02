@@ -1,0 +1,14 @@
+{
+  "mappings": [
+    {
+      "name": "GET kasjerzy list",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/kasjerzy$" },
+      "response": { "status": 200, "bodyFileName": "kasjerzy-list.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "GET kasjerzy by id",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/kasjerzy/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "kasjerzy-single.json", "headers": { "Content-Type": "application/json" } }
+    }
+  ]
+}

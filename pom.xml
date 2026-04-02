@@ -6,12 +6,81 @@
 
     <groupId>io.github.mgrtomaszzurawski</groupId>
     <artifactId>novicloud-root</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
-    <description>NoviCloud SDK and demo application</description>
+    <name>Java SDK for NoviCloud API</name>
+    <description>Unofficial Java SDK for the NoviCloud REST API</description>
+
+    <properties>
+        <project.build.outputTimestamp>2026-03-31T00:00:00Z</project.build.outputTimestamp>
+    </properties>
 
     <modules>
         <module>novicloud-client</module>
         <module>demo-app</module>
     </modules>
+
+    <url>https://github.com/mgrtomaszzurawski/novicloud-client-java</url>
+
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License v3.0</name>
+            <url>https://www.gnu.org/licenses/agpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>mgrtomaszzurawski</id>
+            <name>Tomasz Zurawski</name>
+            <email>mgrtomaszzurawski@gmail.com</email>
+            <url>https://github.com/mgrtomaszzurawski</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/mgrtomaszzurawski/novicloud-client-java.git</connection>
+        <developerConnection>scm:git:https://github.com/mgrtomaszzurawski/novicloud-client-java.git</developerConnection>
+        <url>https://github.com/mgrtomaszzurawski/novicloud-client-java</url>
+        <tag>v1.0.0</tag>
+    </scm>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>4.6</version>
+                    <configuration>
+                        <header>${maven.multiModuleProjectDirectory}/LICENSE-HEADER.txt</header>
+                        <includes>
+                            <include>src/**/*.java</include>
+                            <include>openapi/**/*.yaml</include>
+                            <include>examples/*.java</include>
+                        </includes>
+                        <mapping>
+                            <yaml>SCRIPT_STYLE</yaml>
+                        </mapping>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>process-sources</phase>
+                            <goals>
+                                <goal>format</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

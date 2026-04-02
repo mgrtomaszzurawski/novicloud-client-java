@@ -1,0 +1,23 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "dane": {
+    "id": 2,
+    "nip": "1234567890",
+    "nazwa": "Acme Corp",
+    "skrot": "ACME",
+    "ulica": "Main Street",
+    "nr_domu": "10",
+    "nr_lokalu": "5",
+    "ulica_i_numer": "Main Street 10/5",
+    "kod_poczt": "00-001",
+    "poczta": "Warsaw",
+    "miasto": "Warsaw",
+    "aktywny": true,
+    "dostawca": false,
+    "staly": true,
+    "producent": false,
+    "odbiorca": true,
+    "osoba": false
+  }
+}

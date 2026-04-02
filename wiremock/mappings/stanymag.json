@@ -1,0 +1,24 @@
+{
+  "mappings": [
+    {
+      "name": "GET stanymag list",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/stanymag$" },
+      "response": { "status": 200, "bodyFileName": "stanymag-list.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "GET stanymag by towar and sklep",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/stanymag/[^/]+/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "stanymag-bytowarandsklep.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "GET stanymag by towar",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/stanymag/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "stanymag-bytowar.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "PUT stanymag update",
+      "request": { "method": "PUT", "urlPathPattern": "/[^/]+/stanymag$" },
+      "response": { "status": 200, "bodyFileName": "ok.json", "headers": { "Content-Type": "application/json" } }
+    }
+  ]
+}

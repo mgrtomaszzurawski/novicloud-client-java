@@ -1,0 +1,14 @@
+{
+  "mappings": [
+    {
+      "name": "GET sprzedaz list",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/sprzedaz$" },
+      "response": { "status": 200, "bodyFileName": "sprzedaz-list.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "GET sprzedaz by id",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/sprzedaz/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "sprzedaz-single.json", "headers": { "Content-Type": "application/json" } }
+    }
+  ]
+}

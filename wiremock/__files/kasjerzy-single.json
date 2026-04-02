@@ -1,0 +1,10 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "dane": {
+    "id": 1,
+    "nazwisko": "DUMMY_TEXT",
+    "kod_kasjera": null,
+    "aktywny": true
+  }
+}

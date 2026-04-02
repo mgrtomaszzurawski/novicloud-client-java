@@ -1,0 +1,24 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "dane": {
+    "id": 4000001,
+    "data": "2026-01-10T14:30:00",
+    "nr_dok": "PAR/001/2026",
+    "typ_dok": 21,
+    "nr_systemowy": "SYS-001",
+    "ilosc": 2.0,
+    "cena": 7.15,
+    "stawka_vat": -1,
+    "brutto": 14.3,
+    "podatek": 0.0,
+    "towar": {
+      "id": "294",
+      "link": "http://localhost/demo/towary/294"
+    },
+    "sklep": {
+      "id": "1",
+      "link": "http://localhost/demo/sklepy/1"
+    }
+  }
+}

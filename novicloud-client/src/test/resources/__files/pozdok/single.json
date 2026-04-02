@@ -1,0 +1,29 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "dane": {
+    "id": 1000001,
+    "dokument": {
+      "id": "1",
+      "link": "http://localhost/demo/dokumenty/1"
+    },
+    "towar": {
+      "id": "2499",
+      "link": "http://localhost/demo/towary/2499"
+    },
+    "nr_pozycji": 1,
+    "ilosc": 3.0,
+    "stawka_vat": 2300,
+    "c_przed_rab_netto": 10.0,
+    "c_przed_rab_brutto": 12.3,
+    "c_po_rab_netto": 9.0,
+    "c_po_rab_brutto": 11.07,
+    "rabat_kwota": 1.23,
+    "w_netto": 27.0,
+    "w_podatek": 6.21,
+    "w_brutto": 33.21,
+    "rozl_netto": 27.0,
+    "rozl_podatek": 6.21,
+    "rozl_brutto": 33.21
+  }
+}

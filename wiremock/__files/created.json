@@ -1,0 +1,8 @@
+{
+  "status": 201,
+  "status_opis": "Ok",
+  "dane": {
+    "id": "9999",
+    "link": "http://localhost:4010/demo/resource/9999"
+  }
+}

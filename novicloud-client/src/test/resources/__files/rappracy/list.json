@@ -1,0 +1,32 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 1,
+  "start": 0,
+  "on_page": 1,
+  "links": {
+    "self": "http://localhost/demo/rappracy?start=0"
+  },
+  "dane": [
+    {
+      "czas_pracy": 480,
+      "utarg": 5000.0,
+      "gotowka": 2500.0,
+      "karta": 2000.0,
+      "czek": 0.0,
+      "bon": 100.0,
+      "przelew": 400.0,
+      "inna": 0.0,
+      "paragony_ilosc": 120,
+      "paragony_wartosc": 4800.0,
+      "paragony_pozycje": 350,
+      "faktury_ilosc": 5,
+      "faktury_wartosc": 200.0,
+      "faktury_pozycje": 15,
+      "storno_pozycje": 2,
+      "storno_wartosc": 45.0,
+      "paragony_anulowane_ilosc": 1,
+      "paragony_anulowane_wartosc": 12.5
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "dane": {
+    "id": 1,
+    "nazwa": "DUMMY_NAME"
+  }
+}

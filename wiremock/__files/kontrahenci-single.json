@@ -1,0 +1,23 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "dane": {
+    "id": 2,
+    "nip": "0000000000",
+    "nazwa": "DUMMY_NAME",
+    "skrot": "DUMMY_SHORT",
+    "ulica": "DUMMY_STREET",
+    "nr_domu": "1",
+    "nr_lokalu": "1",
+    "ulica_i_numer": "DUMMY_STREET 1/1",
+    "kod_poczt": "00-000",
+    "poczta": "DUMMY_CITY",
+    "miasto": "DUMMY_CITY",
+    "aktywny": true,
+    "dostawca": false,
+    "staly": true,
+    "producent": false,
+    "odbiorca": true,
+    "osoba": false
+  }
+}

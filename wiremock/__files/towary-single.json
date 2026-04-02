@@ -1,0 +1,25 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "dane": {
+    "id": 2,
+    "kod": "DUMMY_CODE",
+    "cku": "DUMMY_CKU",
+    "nazwa": "DUMMY_NAME",
+    "stawka_vat": 800,
+    "akcyzowy": false,
+    "typ": 0,
+    "cena_ew": 10.63,
+    "cena_det": 16.9,
+    "cena_hurt": 129.9,
+    "cena_noc": 129.9,
+    "cena_dod": 129.9,
+    "przy_sprzedazy": 1,
+    "gtu": "DUMMY_GTU",
+    "aktywny": true,
+    "masa_wl": 0.0,
+    "jm": { "id": "2", "link": "http://localhost:4010/demo/jmiary/2" },
+    "asort": { "id": "4", "link": "http://localhost:4010/demo/asorty/4" },
+    "ost_zmiana": "2000-01-01T00:00:00"
+  }
+}

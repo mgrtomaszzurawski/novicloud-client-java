@@ -1,0 +1,28 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 4,
+  "start": 0,
+  "on_page": 4,
+  "links": {
+    "self": "http://localhost/demo/asorty?start=0"
+  },
+  "dane": [
+    {
+      "id": 1,
+      "nazwa": "Assortment A"
+    },
+    {
+      "id": 2,
+      "nazwa": "Assortment B"
+    },
+    {
+      "id": 3,
+      "nazwa": "Assortment C"
+    },
+    {
+      "id": 4,
+      "nazwa": "Assortment D"
+    }
+  ]
+}

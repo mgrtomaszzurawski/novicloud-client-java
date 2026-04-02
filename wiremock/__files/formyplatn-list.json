@@ -1,0 +1,15 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 3,
+  "start": 0,
+  "on_page": 3,
+  "links": {
+    "self": "http://localhost:4010/demo/formyplatn?start=0"
+  },
+  "dane": [
+    { "id": 1, "nazwa": "DUMMY_NAME", "typ": 0, "reszta": true, "aktywny": true },
+    { "id": 2, "nazwa": "DUMMY_NAME_2", "typ": 2, "reszta": false, "aktywny": true },
+    { "id": 3, "nazwa": "DUMMY_NAME_3", "typ": 5, "reszta": false, "aktywny": true }
+  ]
+}

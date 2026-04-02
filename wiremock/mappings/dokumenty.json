@@ -1,0 +1,14 @@
+{
+  "mappings": [
+    {
+      "name": "GET dokumenty list",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/dokumenty$" },
+      "response": { "status": 200, "bodyFileName": "dokumenty-list.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "GET dokumenty by id",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/dokumenty/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "dokumenty-single.json", "headers": { "Content-Type": "application/json" } }
+    }
+  ]
+}

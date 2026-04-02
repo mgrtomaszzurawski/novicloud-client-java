@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<ruleset name="NoviCloud PMD Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>
+        Custom PMD ruleset for NoviCloud SDK.
+        Based on bestpractices, errorprone, performance — with exclusions for intentional patterns.
+    </description>
+
+    <rule ref="category/java/bestpractices.xml">
+        <!--
+            Demo-app runners keep private methods for manual test scenarios
+            (runCreateOnce, runCreateUpdateDelete, runProbeFilters) that are
+            commented out in run() but kept as reusable tools for live testing.
+            Similarly, some private fields (constants for filter values, operation
+            names) are prepared for those commented-out scenarios.
+        -->
+        <exclude name="UnusedPrivateMethod"/>
+        <exclude name="UnusedPrivateField"/>
+        <!--
+            GuardLogStatement requires if (log.isXxxEnabled()) guards around log calls.
+            All log calls in this project use SLF4J parameterized placeholders ({}).
+            Arguments are simple variable references with no computation. Guards would add
+            boilerplate for zero performance benefit in this context.
+        -->
+        <exclude name="GuardLogStatement"/>
+    </rule>
+
+    <rule ref="category/java/errorprone.xml">
+        <!--
+            Record-style accessor pattern: field 'id' + method 'id()' is intentional in
+            Query/Draft classes (mimics Java records). Not confusing - consistent by design.
+        -->
+        <exclude name="AvoidFieldNameMatchingMethodName"/>
+        <!--
+            FlexibleLocalDateTimeDeserializer inherits Serializable from Jackson's
+            JsonDeserializer. The class is never serialized; it has no mutable instance
+            state (only static DateTimeFormatter constants). Adding serialVersionUID
+            would be meaningless noise.
+        -->
+        <exclude name="MissingSerialVersionUID"/>
+        <!--
+            DU-anomaly false positive: PMD incorrectly reports 'safe' variable as defined-unused
+            when it is assigned in a try block and used in a catch block via closure.
+            This is a known PMD limitation with try-with-resources scoping.
+        -->
+        <exclude name="DataflowAnomalyAnalysis"/>
+        <!--
+            HTTP status codes (429, 500) in NoviCloudException.of() and validation
+            bounds (maxAttempts < 1) in RetryPolicy.Builder are standard, self-documenting
+            literals. Extracting them to named constants would reduce readability.
+        -->
+        <exclude name="AvoidLiteralsInIfCondition"/>
+    </rule>
+
+    <rule ref="category/java/performance.xml">
+        <!--
+            RunnerContext is intentionally created once per runner iteration because each runner
+            needs a fresh, isolated context (its own result accumulator). This is by design.
+        -->
+        <exclude name="AvoidInstantiatingObjectsInLoops"/>
+    </rule>
+
+</ruleset>

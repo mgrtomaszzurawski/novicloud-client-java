@@ -1,0 +1,9 @@
+{
+  "mappings": [
+    {
+      "name": "GET rappracy list",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/rappracy$" },
+      "response": { "status": 200, "bodyFileName": "rappracy-list.json", "headers": { "Content-Type": "application/json" } }
+    }
+  ]
+}

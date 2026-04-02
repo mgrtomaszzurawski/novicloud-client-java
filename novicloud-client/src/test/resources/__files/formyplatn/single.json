@@ -1,0 +1,11 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "dane": {
+    "id": 1,
+    "nazwa": "Cash",
+    "typ": 0,
+    "reszta": true,
+    "aktywny": true
+  }
+}

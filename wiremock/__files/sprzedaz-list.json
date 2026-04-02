@@ -1,0 +1,45 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 1,
+  "start": 0,
+  "on_page": 1,
+  "links": {
+    "self": "http://localhost:4010/demo/sprzedaz?start=0"
+  },
+  "dane": [
+    {
+      "id": 4000001,
+      "data": "2000-01-01T00:00:00",
+      "nr_dok": "DUMMY_TEXT",
+      "typ_dok": 21,
+      "nr_systemowy": "DUMMY_TEXT",
+      "nr_fiskalny": "DUMMY_TEXT",
+      "nr_rap_dobowego": "DUMMY_TEXT",
+      "ilosc": 1.0,
+      "cena": 7.15,
+      "cena_przed_rab": 7.15,
+      "stawka_vat": -1,
+      "brutto": 7.15,
+      "podatek": 0.0,
+      "rabat": 0.0,
+      "towar": { "id": "294", "link": "http://localhost:4010/demo/towary/294" },
+      "sklep": { "id": "1", "link": "http://localhost:4010/demo/sklepy/1" },
+      "kasa": { "id": "1", "link": "http://localhost:4010/demo/kasy/1" },
+      "kasjer": { "id": "2", "link": "http://localhost:4010/demo/kasjerzy/2" },
+      "platnosci": [
+        {
+          "forma_platnosci": { "id": "2", "link": "http://localhost:4010/demo/formyplatn/2" },
+          "waluta": { "id": "1", "link": "http://localhost:4010/demo/waluty/1" },
+          "typ_formy_platnosci": 2,
+          "kod_waluty": "PLN",
+          "kurs": 1.0,
+          "wplata_waluta": 28.19,
+          "wplata_waluta_domyslna": 28.19,
+          "reszta_waluta": 0.0,
+          "reszta_waluta_domyslna": 0.0
+        }
+      ]
+    }
+  ]
+}

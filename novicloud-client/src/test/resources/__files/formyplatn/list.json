@@ -1,0 +1,33 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 3,
+  "start": 0,
+  "on_page": 3,
+  "links": {
+    "self": "http://localhost/demo/formyplatn?start=0"
+  },
+  "dane": [
+    {
+      "id": 1,
+      "nazwa": "Cash",
+      "typ": 0,
+      "reszta": true,
+      "aktywny": true
+    },
+    {
+      "id": 2,
+      "nazwa": "Credit Card",
+      "typ": 1,
+      "reszta": false,
+      "aktywny": true
+    },
+    {
+      "id": 3,
+      "nazwa": "Transfer",
+      "typ": 5,
+      "reszta": false,
+      "aktywny": true
+    }
+  ]
+}

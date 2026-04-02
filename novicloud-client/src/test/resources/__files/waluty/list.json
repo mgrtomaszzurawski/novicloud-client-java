@@ -1,0 +1,20 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 1,
+  "start": 0,
+  "on_page": 1,
+  "links": {
+    "self": "http://localhost/demo/waluty?start=0"
+  },
+  "dane": [
+    {
+      "id": 1,
+      "nazwa": "Polski zloty",
+      "kod": "PLN",
+      "kurs": 1.0,
+      "aktywny": true,
+      "domyslna": true
+    }
+  ]
+}

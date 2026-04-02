@@ -1,0 +1,16 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 4,
+  "start": 0,
+  "on_page": 4,
+  "links": {
+    "self": "http://localhost:4010/demo/asorty?start=0"
+  },
+  "dane": [
+    { "id": 1, "nazwa": "DUMMY_NAME_1" },
+    { "id": 2, "nazwa": "DUMMY_NAME_2" },
+    { "id": 3, "nazwa": "DUMMY_NAME_3" },
+    { "id": 4, "nazwa": "DUMMY_NAME_4" }
+  ]
+}

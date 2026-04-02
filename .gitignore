@@ -10,6 +10,8 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+out/
+**/out/
 *.iws
 *.iml
 *.ipr
@@ -38,3 +40,29 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### WorkLog ###
+WorkLog/
+
+### Logs ###
+logs/
+**/logs/*.log
+
+### IDE ###
+.cursor/
+
+### WireMock binary ###
+wiremock/wiremock-standalone.jar
+
+### Claude Code ###
+.claude/settings.local.json
+
+### Project context (audit reports, session logs, not for publish) ###
+context/
+
+### Demo-app generated IDs ###
+demo-soft-delete-ids.properties
+
+### Secrets ###
+.env
+*.gpg

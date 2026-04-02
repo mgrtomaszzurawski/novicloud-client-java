@@ -1,0 +1,19 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "dane": {
+    "id": 1,
+    "nip": "0000000000",
+    "nazwa": "Main Store",
+    "skrot": "MAIN",
+    "numer": 1,
+    "ulica": "Market Square",
+    "nr_domu": "1",
+    "nr_lokalu": "1",
+    "ulica_i_numer": "Market Square 1/1",
+    "kod_poczt": "00-000",
+    "poczta": "Warsaw",
+    "miasto": "Warsaw",
+    "aktywny": true
+  }
+}

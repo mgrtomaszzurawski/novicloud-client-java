@@ -1,0 +1,9 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "dane": {
+    "id": -1,
+    "etykieta": "D",
+    "opis": "DUMMY_DESCRIPTION"
+  }
+}

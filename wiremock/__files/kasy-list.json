@@ -1,0 +1,14 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 2,
+  "start": 0,
+  "on_page": 2,
+  "links": {
+    "self": "http://localhost:4010/demo/kasy?start=0"
+  },
+  "dane": [
+    { "id": 1, "numer": 1, "nazwa": "DUMMY_NAME", "ecr": "DUMMY_TEXT", "aktywny": true, "ostatnia_sync": null, "ostatnia_sprzed": "2000-01-01T00:00:00" },
+    { "id": 2, "numer": 2, "nazwa": "DUMMY_NAME_2", "ecr": "DUMMY_TEXT", "aktywny": true, "ostatnia_sync": "2000-01-01T00:00:00", "ostatnia_sprzed": "2000-01-01T00:00:00" }
+  ]
+}

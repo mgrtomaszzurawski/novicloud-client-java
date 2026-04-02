@@ -1,0 +1,27 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 1,
+  "start": 0,
+  "on_page": 1,
+  "links": {
+    "self": "http://localhost:4010/demo/sklepy?start=0"
+  },
+  "dane": [
+    {
+      "id": 1,
+      "nip": "0000000000",
+      "nazwa": "DUMMY_NAME",
+      "skrot": "DUMMY_SHORT",
+      "numer": 1,
+      "ulica": "DUMMY_STREET",
+      "nr_domu": "1",
+      "nr_lokalu": "1",
+      "ulica_i_numer": "DUMMY_STREET 1/1",
+      "kod_poczt": "00-000",
+      "poczta": "DUMMY_CITY",
+      "miasto": "DUMMY_CITY",
+      "aktywny": true
+    }
+  ]
+}

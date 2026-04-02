@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 1,
+  "start": 0,
+  "on_page": 1,
+  "links": {
+    "self": "http://localhost:4010/demo/pozdok?start=0"
+  },
+  "dane": [
+    {
+      "id": 1000001,
+      "dokument": { "id": "1", "link": "http://localhost:4010/demo/dokumenty/1" },
+      "towar": { "id": "2499", "link": "http://localhost:4010/demo/towary/2499" },
+      "nr_pozycji": 1,
+      "ilosc": 0.0,
+      "stawka_vat": 2300,
+      "c_przed_rab_netto": 0.0,
+      "c_przed_rab_brutto": 0,
+      "c_po_rab_netto": 0.0,
+      "c_po_rab_brutto": 0,
+      "rab_kwota": 0.0,
+      "w_netto": 0.0,
+      "w_podatek": 0,
+      "w_brutto": 0,
+      "rozl_netto": 0.0,
+      "rozl_podatek": 0.0,
+      "rozl_brutto": 0.0
+    }
+  ]
+}

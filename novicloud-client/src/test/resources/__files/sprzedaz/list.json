@@ -1,0 +1,44 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 1,
+  "start": 0,
+  "on_page": 1,
+  "links": {
+    "self": "http://localhost/demo/sprzedaz?start=0"
+  },
+  "dane": [
+    {
+      "id": 4000001,
+      "data": "2026-01-10T14:30:00",
+      "nr_dok": "PAR/001/2026",
+      "typ_dok": 21,
+      "nr_systemowy": "SYS-001",
+      "nr_fiskalny": "FISK-001",
+      "nr_rap_dob": "RAP-001",
+      "ilosc": 2.0,
+      "cena": 7.15,
+      "cena_przed_rab": 8.0,
+      "stawka_vat": -1,
+      "brutto": 14.3,
+      "podatek": 0.0,
+      "rabat": 1.7,
+      "towar": {
+        "id": "294",
+        "link": "http://localhost/demo/towary/294"
+      },
+      "sklep": {
+        "id": "1",
+        "link": "http://localhost/demo/sklepy/1"
+      },
+      "kasa": {
+        "id": "1",
+        "link": "http://localhost/demo/kasy/1"
+      },
+      "kasjer": {
+        "id": "2",
+        "link": "http://localhost/demo/kasjerzy/2"
+      }
+    }
+  ]
+}

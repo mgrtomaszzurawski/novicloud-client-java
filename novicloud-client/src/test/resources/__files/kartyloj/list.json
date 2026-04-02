@@ -1,0 +1,22 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 1,
+  "start": 0,
+  "on_page": 1,
+  "links": {
+    "self": "http://localhost/demo/f-karty-loj?start=0"
+  },
+  "dane": [
+    {
+      "kod": "LOJ-001",
+      "typ": 1,
+      "wazna_od": "2024-01-01T00:00:00",
+      "wazna_do": "2025-12-31T23:59:59",
+      "posiadacz": "Jan Kowalski",
+      "nazwisko_imie": "Jan Kowalski",
+      "telefon": "500100200",
+      "email": "jan@example.com"
+    }
+  ]
+}

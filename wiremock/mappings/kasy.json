@@ -1,0 +1,14 @@
+{
+  "mappings": [
+    {
+      "name": "GET kasy list",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/kasy$" },
+      "response": { "status": 200, "bodyFileName": "kasy-list.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "GET kasy by id",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/kasy/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "kasy-single.json", "headers": { "Content-Type": "application/json" } }
+    }
+  ]
+}

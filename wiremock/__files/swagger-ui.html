@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NoviCloud REST API — Swagger UI (Mock)</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+  <style>
+    body { margin: 0; }
+    .topbar { background-color: #1b3a5c !important; }
+    .topbar-wrapper a { display: none; }
+    .topbar-wrapper::before {
+      content: 'NoviCloud REST API — Mock Server (localhost:4010)';
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      padding: 10px 20px;
+      display: block;
+    }
+    .info .title small { display: none; }
+  </style>
+</head>
+<body>
+<div id="swagger-ui"></div>
+<script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+<script>
+  SwaggerUIBundle({
+    url: '/openapi.json',
+    dom_id: '#swagger-ui',
+    presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
+    layout: 'StandaloneLayout',
+    deepLinking: true,
+    tryItOutEnabled: true,
+    requestInterceptor: function(req) {
+      // Redirect requests to mock server when using "Try it out"
+      req.url = req.url.replace(/^https?:\/\/system\.novicloud\.pl/, 'http://localhost:4010');
+      // Remove Authorization header — mock ignores auth
+      delete req.headers['Authorization'];
+      return req;
+    }
+  });
+</script>
+</body>
+</html>

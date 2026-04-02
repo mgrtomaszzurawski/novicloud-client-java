@@ -1,0 +1,41 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 1,
+  "start": 0,
+  "on_page": 1,
+  "links": {
+    "self": "http://localhost/demo/dokumenty?start=0"
+  },
+  "dane": [
+    {
+      "id": 1,
+      "typ_dok": 14,
+      "data_wystawienia": "2026-01-15T10:30:00",
+      "nr_dok": "DOK/001/2026",
+      "sklep": {
+        "id": "1",
+        "link": "http://localhost/demo/sklepy/1"
+      },
+      "kasjer": {
+        "id": "2",
+        "link": "http://localhost/demo/kasjerzy/2"
+      },
+      "netto": 100.0,
+      "podatek": 23.0,
+      "brutto": 123.0,
+      "rozbicie_vat": [
+        {
+          "stawka": 2300,
+          "netto": 100.0,
+          "podatek": 23.0,
+          "brutto": 123.0
+        }
+      ],
+      "pozycje": {
+        "id": "1",
+        "link": "http://localhost/demo/pozdok?dokument.id=1"
+      }
+    }
+  ]
+}

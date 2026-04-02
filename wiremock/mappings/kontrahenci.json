@@ -1,0 +1,34 @@
+{
+  "mappings": [
+    {
+      "name": "GET kontrahenci list",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/kontrahenci$" },
+      "response": { "status": 200, "bodyFileName": "kontrahenci-list.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "GET kontrahenci by id",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/kontrahenci/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "kontrahenci-single.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "POST kontrahenci create",
+      "request": { "method": "POST", "urlPathPattern": "/[^/]+/kontrahenci$" },
+      "response": { "status": 201, "bodyFileName": "created.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "PUT kontrahenci collection update",
+      "request": { "method": "PUT", "urlPathPattern": "/[^/]+/kontrahenci$" },
+      "response": { "status": 200, "bodyFileName": "ok.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "PUT kontrahenci update by id",
+      "request": { "method": "PUT", "urlPathPattern": "/[^/]+/kontrahenci/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "ok.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "DELETE kontrahenci by id",
+      "request": { "method": "DELETE", "urlPathPattern": "/[^/]+/kontrahenci/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "ok.json", "headers": { "Content-Type": "application/json" } }
+    }
+  ]
+}

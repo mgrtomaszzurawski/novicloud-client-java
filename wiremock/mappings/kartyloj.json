@@ -1,0 +1,29 @@
+{
+  "mappings": [
+    {
+      "name": "GET f-karty-loj list",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/f-karty-loj$" },
+      "response": { "status": 200, "bodyFileName": "kartyloj-list.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "GET f-karty-loj by kod",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/f-karty-loj/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "kartyloj-single.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "POST f-karty-loj create",
+      "request": { "method": "POST", "urlPathPattern": "/[^/]+/f-karty-loj$" },
+      "response": { "status": 201, "bodyFileName": "created.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "PUT f-karty-loj collection update",
+      "request": { "method": "PUT", "urlPathPattern": "/[^/]+/f-karty-loj$" },
+      "response": { "status": 200, "bodyFileName": "ok.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "PUT f-karty-loj update by kod",
+      "request": { "method": "PUT", "urlPathPattern": "/[^/]+/f-karty-loj/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "ok.json", "headers": { "Content-Type": "application/json" } }
+    }
+  ]
+}

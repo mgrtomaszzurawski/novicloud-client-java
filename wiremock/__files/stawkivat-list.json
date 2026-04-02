@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 5,
+  "start": 0,
+  "on_page": 5,
+  "links": {
+    "self": "http://localhost:4010/demo/stawkivat?start=0"
+  },
+  "dane": [
+    { "id": -1, "etykieta": "D", "opis": "DUMMY_DESCRIPTION" },
+    { "id": 0,  "etykieta": "D", "opis": "DUMMY_DESCRIPTION" },
+    { "id": 500, "etykieta": "D", "opis": "DUMMY_DESCRIPTION" },
+    { "id": 800, "etykieta": "D", "opis": "DUMMY_DESCRIPTION" },
+    { "id": 2300, "etykieta": "D", "opis": "DUMMY_DESCRIPTION" }
+  ]
+}

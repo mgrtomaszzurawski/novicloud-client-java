@@ -1,0 +1,14 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 2,
+  "start": 0,
+  "on_page": 2,
+  "links": {
+    "self": "http://localhost:4010/demo/kasjerzy?start=0"
+  },
+  "dane": [
+    { "id": 1, "nazwisko": "DUMMY_TEXT", "kod_kasjera": null, "aktywny": true },
+    { "id": 2, "nazwisko": "DUMMY_TEXT_2", "kod_kasjera": "", "aktywny": true }
+  ]
+}

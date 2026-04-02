@@ -1,0 +1,21 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 1,
+  "start": 0,
+  "on_page": 1,
+  "links": {
+    "self": "http://localhost/demo/kraje?start=0"
+  },
+  "dane": [
+    {
+      "id": 1,
+      "nazwa": "Polska",
+      "kod": "PL",
+      "waluta": {
+        "id": "1",
+        "link": "http://localhost/demo/waluty/1"
+      }
+    }
+  ]
+}

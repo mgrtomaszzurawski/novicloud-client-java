@@ -1,0 +1,34 @@
+{
+  "mappings": [
+    {
+      "name": "GET sklepy list",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/sklepy$" },
+      "response": { "status": 200, "bodyFileName": "sklepy-list.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "GET sklepy by id",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/sklepy/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "sklepy-single.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "POST sklepy create",
+      "request": { "method": "POST", "urlPathPattern": "/[^/]+/sklepy$" },
+      "response": { "status": 201, "bodyFileName": "created.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "PUT sklepy collection update",
+      "request": { "method": "PUT", "urlPathPattern": "/[^/]+/sklepy$" },
+      "response": { "status": 200, "bodyFileName": "ok.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "PUT sklepy update by id",
+      "request": { "method": "PUT", "urlPathPattern": "/[^/]+/sklepy/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "ok.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "DELETE sklepy by id",
+      "request": { "method": "DELETE", "urlPathPattern": "/[^/]+/sklepy/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "ok.json", "headers": { "Content-Type": "application/json" } }
+    }
+  ]
+}

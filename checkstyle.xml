@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+    "https://checkstyle.org/dtds/configuration_1_3.dtd">
+<module name="Checker">
+    <property name="severity" value="warning"/>
+    <property name="fileExtensions" value="java"/>
+
+    <module name="TreeWalker">
+        <!-- Imports -->
+        <module name="UnusedImports"/>
+        <module name="RedundantImport"/>
+        <module name="IllegalImport"/>
+
+        <!-- Błędy i pułapki -->
+        <module name="EmptyCatchBlock">
+            <property name="exceptionVariableName" value="ignored|expected"/>
+        </module>
+        <module name="StringLiteralEquality"/>
+        <module name="EqualsHashCode"/>
+        <module name="MissingSwitchDefault"/>
+        <module name="FallThrough"/>
+        <!-- OneStatementPerLine removed: builder pattern uses { this.x = x; return this; } intentionally -->
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+
+        <!-- Nazewnictwo — poluzowane dla tego projektu -->
+        <module name="ConstantName"/>
+        <module name="LocalVariableName"/>
+        <module name="MethodName"/>
+        <module name="PackageName"/>
+        <module name="TypeName"/>
+
+        <!-- Czytelność -->
+        <module name="LeftCurly">
+            <!-- nlow: allows inline blocks { return x; } on a single line (builder pattern) -->
+            <property name="option" value="nlow"/>
+        </module>
+        <module name="RightCurly"/>
+        <module name="NeedBraces"/>
+        <module name="MultipleVariableDeclarations"/>
+    </module>
+</module>

@@ -1,0 +1,14 @@
+{
+  "mappings": [
+    {
+      "name": "GET pozdok list",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/pozdok$" },
+      "response": { "status": 200, "bodyFileName": "pozdok-list.json", "headers": { "Content-Type": "application/json" } }
+    },
+    {
+      "name": "GET pozdok by id",
+      "request": { "method": "GET", "urlPathPattern": "/[^/]+/pozdok/[^/]+$" },
+      "response": { "status": 200, "bodyFileName": "pozdok-single.json", "headers": { "Content-Type": "application/json" } }
+    }
+  ]
+}

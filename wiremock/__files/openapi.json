@@ -1,0 +1,616 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "NoviCloud REST API",
+    "description": "REST API NoviCloud – pobieranie i zmiana danych zasobów na koncie. Źródło: Dokumentacja techniczna REST API NoviCloud wersja 2.10, © Insoft Sp. z o. o.",
+    "version": "2.10"
+  },
+  "servers": [
+    {
+      "url": "https://system.novicloud.pl/rest/api",
+      "description": "Bazowy adres API (najnowsza wersja)"
+    },
+    {
+      "url": "https://system.novicloud.pl/rest/api/v2",
+      "description": "API wersja 2"
+    },
+    {
+      "url": "https://system.novicloud.pl/rest/api/v1",
+      "description": "API wersja 1"
+    }
+  ],
+  "security": [{ "basicAuth": [] }],
+  "tags": [
+    { "name": "Towary", "description": "Katalog towarów" },
+    { "name": "Asortymenty", "description": "Asortymenty" },
+    { "name": "Jednostki miary", "description": "Jednostki miary" },
+    { "name": "Stawki VAT", "description": "Stawki VAT" },
+    { "name": "Kontrahenci", "description": "Kontrahenci" },
+    { "name": "Sklepy", "description": "Sklepy" },
+    { "name": "Kasy", "description": "Kasy (GET)" },
+    { "name": "Kasjerzy", "description": "Kasjerzy (GET)" },
+    { "name": "Waluty", "description": "Waluty" },
+    { "name": "Kraje", "description": "Kraje" },
+    { "name": "FormyPlatnosci", "description": "Formy płatności" },
+    { "name": "Dokumenty", "description": "Dokumenty (GET)" },
+    { "name": "PozycjeDokumentow", "description": "Pozycje dokumentów (GET)" },
+    { "name": "Stany magazynowe", "description": "Stany magazynowe" },
+    { "name": "Sprzedaz", "description": "Sprzedaż (GET)" },
+    { "name": "Raporty", "description": "Raporty sprzedaży i czasu pracy" },
+    { "name": "KartyLojalnosciowe", "description": "Karty lojalnościowe" }
+  ],
+  "paths": {
+    "/{nazwa_konta}/towary": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": {
+        "operationId": "listTowary",
+        "tags": ["Towary"],
+        "summary": "Lista towarów",
+        "parameters": [
+          { "$ref": "#/components/parameters/nazwaKonta" },
+          { "$ref": "#/components/parameters/start" },
+          { "$ref": "#/components/parameters/on_page" },
+          { "$ref": "#/components/parameters/fts" },
+          { "name": "id", "in": "query", "schema": { "type": "string" }, "description": "Lista lub zakres: id=1,2,3 lub min/max" },
+          { "name": "nazwa", "in": "query", "schema": { "type": "string" }, "description": "Tekst, ~ = dowolny ciąg (np. ~napój~)" },
+          { "name": "kod", "in": "query", "schema": { "type": "string" } },
+          { "name": "stawka_vat", "in": "query", "schema": { "type": "integer" } },
+          { "name": "akcyzowy", "in": "query", "schema": { "type": "boolean" } },
+          { "name": "typ", "in": "query", "schema": { "type": "integer" } },
+          { "name": "cena_det", "in": "query", "schema": { "type": "string" }, "description": "min5.5 lub max10" },
+          { "name": "jm.id", "in": "query", "schema": { "type": "integer" } },
+          { "name": "asort.id", "in": "query", "schema": { "type": "integer" } },
+          { "name": "aktywny", "in": "query", "schema": { "type": "boolean" } }
+        ],
+        "responses": {
+          "200": { "description": "Kolekcja towarów", "content": { "application/json": { "schema": { "type": "object", "properties": { "status": {}, "status_opis": {}, "size": {}, "start": {}, "on_page": {}, "links": { "$ref": "#/components/schemas/PaginationLinks" }, "dane": { "type": "array", "items": { "$ref": "#/components/schemas/Towar" } } } } } } },
+          "400": { "description": "Błędne parametry" },
+          "401": { "description": "Błędna autoryzacja" },
+          "402": { "description": "Brak opcji REST API" }
+        }
+      },
+      "post": {
+        "operationId": "createTowar",
+        "tags": ["Towary"],
+        "summary": "Utworzenie towaru",
+        "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Towar" } } } },
+        "responses": {
+          "201": { "description": "Utworzono", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiResponseCreated" } } } },
+          "400": { "description": "Błędne dane" },
+          "401": { "description": "Błędna autoryzacja" }
+        }
+      },
+      "put": {
+        "operationId": "updateTowary",
+        "tags": ["Towary"],
+        "summary": "Aktualizacja towaru (wymaga id w body)",
+        "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Towar" } } } },
+        "responses": {
+          "200": { "description": "OK" },
+          "400": { "description": "Błędne dane" },
+          "401": { "description": "Błędna autoryzacja" }
+        }
+      }
+    },
+    "/{nazwa_konta}/towary/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+      "get": {
+        "operationId": "getTowarById",
+        "tags": ["Towary"],
+        "summary": "Pobierz towar po ID",
+        "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+        "responses": {
+          "200": { "description": "Towar", "content": { "application/json": { "schema": { "type": "object", "properties": { "status": {}, "status_opis": {}, "dane": { "$ref": "#/components/schemas/Towar" } } } } } },
+          "400": { "description": "Błędny format id" },
+          "401": { "description": "Błędna autoryzacja" }
+        }
+      },
+      "put": {
+        "operationId": "updateTowarById",
+        "tags": ["Towary"],
+        "summary": "Aktualizacja towaru (id z URL)",
+        "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+        "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Towar" } } } },
+        "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } }
+      },
+      "delete": {
+        "operationId": "deleteTowar",
+        "tags": ["Towary"],
+        "summary": "Usuń towar",
+        "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+        "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } }
+      }
+    },
+    "/{nazwa_konta}/asorty": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "listAsortymenty", "tags": ["Asortymenty"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/start" }, { "$ref": "#/components/parameters/on_page" }, { "$ref": "#/components/parameters/fts" }, { "name": "id", "in": "query", "schema": { "type": "string" } }, { "name": "nazwa", "in": "query", "schema": { "type": "string" } }, { "name": "parent.id", "in": "query", "schema": { "type": "integer" } }], "responses": { "200": { "description": "Kolekcja asortymentów" }, "401": { "description": "Błędna autoryzacja" } } },
+      "post": { "operationId": "createAsortyment", "tags": ["Asortymenty"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Asortyment" } } } }, "responses": { "201": { "description": "Utworzono" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateAsortymenty", "tags": ["Asortymenty"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Asortyment" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/asorty/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+      "get": { "operationId": "getAsortymentById", "tags": ["Asortymenty"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "Asortyment" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateAsortymentById", "tags": ["Asortymenty"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Asortyment" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "delete": { "operationId": "deleteAsortyment", "tags": ["Asortymenty"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/jmiary": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "listJednostkiMiary", "tags": ["Jednostki miary"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/start" }, { "$ref": "#/components/parameters/on_page" }, { "$ref": "#/components/parameters/fts" }, { "name": "id", "in": "query", "schema": { "type": "string" } }, { "name": "nazwa", "in": "query", "schema": { "type": "string" } }, { "name": "precyzja", "in": "query", "schema": { "type": "integer" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "post": { "operationId": "createJednostkaMiary", "tags": ["Jednostki miary"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JednostkaMiary" } } } }, "responses": { "201": { "description": "Utworzono" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateJednostkiMiary", "tags": ["Jednostki miary"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JednostkaMiary" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/jmiary/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+      "get": { "operationId": "getJednostkaMiaryById", "tags": ["Jednostki miary"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateJednostkaMiaryById", "tags": ["Jednostki miary"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/JednostkaMiary" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "delete": { "operationId": "deleteJednostkaMiary", "tags": ["Jednostki miary"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/stawkivat": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "listStawkiVat", "tags": ["Stawki VAT"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/start" }, { "$ref": "#/components/parameters/on_page" }, { "name": "id", "in": "query", "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "post": { "operationId": "createStawkaVat", "tags": ["Stawki VAT"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StawkaVat" } } } }, "responses": { "201": { "description": "Utworzono" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateStawkiVat", "tags": ["Stawki VAT"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StawkaVat" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/stawkivat/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+      "get": { "operationId": "getStawkaVatById", "tags": ["Stawki VAT"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateStawkaVatById", "tags": ["Stawki VAT"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StawkaVat" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "delete": { "operationId": "deleteStawkaVat", "tags": ["Stawki VAT"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/kontrahenci": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "listKontrahenci", "tags": ["Kontrahenci"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/start" }, { "$ref": "#/components/parameters/on_page" }, { "$ref": "#/components/parameters/fts" }, { "name": "id", "in": "query", "schema": { "type": "string" } }, { "name": "nazwa", "in": "query", "schema": { "type": "string" } }, { "name": "nip", "in": "query", "schema": { "type": "string" } }, { "name": "dostawca", "in": "query", "schema": { "type": "boolean" } }, { "name": "producent", "in": "query", "schema": { "type": "boolean" } }, { "name": "staly", "in": "query", "schema": { "type": "boolean" } }, { "name": "odbiorca", "in": "query", "schema": { "type": "boolean" } }, { "name": "osoba", "in": "query", "schema": { "type": "boolean" } }, { "name": "aktywny", "in": "query", "schema": { "type": "boolean" } }, { "name": "kraj.id", "in": "query", "schema": { "type": "integer" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "post": { "operationId": "createKontrahent", "tags": ["Kontrahenci"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Kontrahent" } } } }, "responses": { "201": { "description": "Utworzono" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateKontrahenci", "tags": ["Kontrahenci"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Kontrahent" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/kontrahenci/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+      "get": { "operationId": "getKontrahentById", "tags": ["Kontrahenci"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateKontrahentById", "tags": ["Kontrahenci"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Kontrahent" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "delete": { "operationId": "deleteKontrahent", "tags": ["Kontrahenci"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/sklepy": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "listSklepy", "tags": ["Sklepy"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/start" }, { "$ref": "#/components/parameters/on_page" }, { "$ref": "#/components/parameters/fts" }, { "name": "id", "in": "query", "schema": { "type": "string" } }, { "name": "nazwa", "in": "query", "schema": { "type": "string" } }, { "name": "numer", "in": "query", "schema": { "type": "integer" } }, { "name": "aktywny", "in": "query", "schema": { "type": "boolean" } }, { "name": "kraj.id", "in": "query", "schema": { "type": "integer" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "post": { "operationId": "createSklep", "tags": ["Sklepy"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Sklep" } } } }, "responses": { "201": { "description": "Utworzono" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateSklepy", "tags": ["Sklepy"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Sklep" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/sklepy/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+      "get": { "operationId": "getSklepById", "tags": ["Sklepy"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateSklepById", "tags": ["Sklepy"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Sklep" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "delete": { "operationId": "deleteSklep", "tags": ["Sklepy"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/kasy": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "listKasy", "tags": ["Kasy"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/start" }, { "$ref": "#/components/parameters/on_page" }, { "name": "id", "in": "query", "schema": { "type": "string" } }, { "name": "nazwa", "in": "query", "schema": { "type": "string" } }, { "name": "numer", "in": "query", "schema": { "type": "integer" } }, { "name": "ecr", "in": "query", "schema": { "type": "string" } }, { "name": "aktywny", "in": "query", "schema": { "type": "boolean" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/kasy/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+      "get": { "operationId": "getKasaById", "tags": ["Kasy"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/kasjerzy": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "listKasjerzy", "tags": ["Kasjerzy"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/start" }, { "$ref": "#/components/parameters/on_page" }, { "$ref": "#/components/parameters/fts" }, { "name": "id", "in": "query", "schema": { "type": "string" } }, { "name": "nazwisko", "in": "query", "schema": { "type": "string" } }, { "name": "kod_kasjera", "in": "query", "schema": { "type": "string" } }, { "name": "aktywny", "in": "query", "schema": { "type": "boolean" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/kasjerzy/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+      "get": { "operationId": "getKasjerById", "tags": ["Kasjerzy"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/waluty": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "listWaluty", "tags": ["Waluty"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/start" }, { "$ref": "#/components/parameters/on_page" }, { "$ref": "#/components/parameters/fts" }, { "name": "id", "in": "query", "schema": { "type": "string" } }, { "name": "nazwa", "in": "query", "schema": { "type": "string" } }, { "name": "kod", "in": "query", "schema": { "type": "string" } }, { "name": "kurs", "in": "query", "schema": { "type": "string" } }, { "name": "domyslna", "in": "query", "schema": { "type": "boolean" } }, { "name": "aktywny", "in": "query", "schema": { "type": "boolean" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "post": { "operationId": "createWaluta", "tags": ["Waluty"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Waluta" } } } }, "responses": { "201": { "description": "Utworzono" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateWaluty", "tags": ["Waluty"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Waluta" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/waluty/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+      "get": { "operationId": "getWalutaById", "tags": ["Waluty"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateWalutaById", "tags": ["Waluty"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Waluta" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "delete": { "operationId": "deleteWaluta", "tags": ["Waluty"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/kraje": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "listKraje", "tags": ["Kraje"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/start" }, { "$ref": "#/components/parameters/on_page" }, { "$ref": "#/components/parameters/fts" }, { "name": "id", "in": "query", "schema": { "type": "string" } }, { "name": "nazwa", "in": "query", "schema": { "type": "string" } }, { "name": "kod", "in": "query", "schema": { "type": "string" } }, { "name": "waluta.id", "in": "query", "schema": { "type": "integer" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "post": { "operationId": "createKraj", "tags": ["Kraje"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Kraj" } } } }, "responses": { "201": { "description": "Utworzono" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateKraje", "tags": ["Kraje"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Kraj" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/kraje/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+      "get": { "operationId": "getKrajById", "tags": ["Kraje"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateKrajById", "tags": ["Kraje"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Kraj" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "delete": { "operationId": "deleteKraj", "tags": ["Kraje"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/formyplatn": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "listFormyPlatnosci", "tags": ["FormyPlatnosci"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/start" }, { "$ref": "#/components/parameters/on_page" }, { "name": "id", "in": "query", "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "post": { "operationId": "createFormaPlatnosci", "tags": ["FormyPlatnosci"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FormaPlatnosci" } } } }, "responses": { "201": { "description": "Utworzono" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateFormyPlatnosci", "tags": ["FormyPlatnosci"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FormaPlatnosci" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/formyplatn/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+      "get": { "operationId": "getFormaPlatnosciById", "tags": ["FormyPlatnosci"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateFormaPlatnosciById", "tags": ["FormyPlatnosci"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FormaPlatnosci" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "delete": { "operationId": "deleteFormaPlatnosci", "tags": ["FormyPlatnosci"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/dokumenty": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "listDokumenty", "tags": ["Dokumenty"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/start" }, { "$ref": "#/components/parameters/on_page" }, { "name": "id", "in": "query", "schema": { "type": "string" } }, { "name": "typ_dok", "in": "query", "schema": { "type": "integer" } }, { "name": "data_wystawienia", "in": "query", "schema": { "type": "string" } }, { "name": "data_wplywu", "in": "query", "schema": { "type": "string" } }, { "name": "data_wykonania", "in": "query", "schema": { "type": "string" } }, { "name": "nr_dok", "in": "query", "schema": { "type": "string" } }, { "name": "sklep.id", "in": "query", "schema": { "type": "integer" } }, { "name": "kontrahent.id", "in": "query", "schema": { "type": "integer" } }, { "name": "kasa.id", "in": "query", "schema": { "type": "integer" } }, { "name": "kasjer.id", "in": "query", "schema": { "type": "integer" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/dokumenty/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+      "get": { "operationId": "getDokumentById", "tags": ["Dokumenty"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/pozdok": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "listPozdok", "tags": ["PozycjeDokumentow"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/start" }, { "$ref": "#/components/parameters/on_page" }, { "name": "id", "in": "query", "schema": { "type": "string" } }, { "name": "dokument.id", "in": "query", "schema": { "type": "integer" } }, { "name": "dokument.typ_dok", "in": "query", "schema": { "type": "integer" } }, { "name": "dokument.data_wystawienia", "in": "query", "schema": { "type": "string" } }, { "name": "dokument.kontrahent.id", "in": "query", "schema": { "type": "integer" } }, { "name": "dokument.sklep.id", "in": "query", "schema": { "type": "integer" } }, { "name": "towar.id", "in": "query", "schema": { "type": "integer" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/pozdok/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+      "get": { "operationId": "getPozdokById", "tags": ["PozycjeDokumentow"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/stanymag": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "listStanymag", "tags": ["Stany magazynowe"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/start" }, { "$ref": "#/components/parameters/on_page" }, { "name": "towar.id", "in": "query", "schema": { "type": "integer" } }, { "name": "sklep.id", "in": "query", "schema": { "type": "integer" } }, { "name": "na_dzien", "in": "query", "schema": { "type": "string", "format": "date" }, "description": "Stan na dzień yyyy-MM-dd" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateStanymag", "tags": ["Stany magazynowe"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StanMagazynowy" } } }, "description": "Wymaga id sklepu i id towaru w body" }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/stanymag/{id_towaru}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "name": "id_towaru", "in": "path", "required": true, "schema": { "type": "integer" } }],
+      "get": { "operationId": "getStanymagByIdTowaru", "tags": ["Stany magazynowe"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "name": "id_towaru", "in": "path", "required": true, "schema": { "type": "integer" } }, { "name": "na_dzien", "in": "query", "schema": { "type": "string", "format": "date" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateStanymagByIdTowaru", "tags": ["Stany magazynowe"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "name": "id_towaru", "in": "path", "required": true, "schema": { "type": "integer" } }], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StanMagazynowy" } } }, "description": "Wymaga id sklepu w body" }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/stanymag/{id_towaru}/{id_sklepu}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "name": "id_towaru", "in": "path", "required": true, "schema": { "type": "integer" } }, { "name": "id_sklepu", "in": "path", "required": true, "schema": { "type": "integer" } }],
+      "get": { "operationId": "getStanymagByIdTowaruIdSklepu", "tags": ["Stany magazynowe"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "name": "id_towaru", "in": "path", "required": true, "schema": { "type": "integer" } }, { "name": "id_sklepu", "in": "path", "required": true, "schema": { "type": "integer" } }, { "name": "na_dzien", "in": "query", "schema": { "type": "string", "format": "date" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateStanymagByIdTowaruIdSklepu", "tags": ["Stany magazynowe"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "name": "id_towaru", "in": "path", "required": true, "schema": { "type": "integer" } }, { "name": "id_sklepu", "in": "path", "required": true, "schema": { "type": "integer" } }], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StanMagazynowy" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/sprzedaz": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "listSprzedaz", "tags": ["Sprzedaz"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/start" }, { "$ref": "#/components/parameters/on_page" }, { "name": "id", "in": "query", "schema": { "type": "string" } }, { "name": "data", "in": "query", "schema": { "type": "string" }, "description": "min/max np. min2017-05-20, max2017-05-25T23:59:59" }, { "name": "nr_dok", "in": "query", "schema": { "type": "string" } }, { "name": "typ_dok", "in": "query", "schema": { "type": "integer" } }, { "name": "sklep.id", "in": "query", "schema": { "type": "integer" } }, { "name": "kasa.id", "in": "query", "schema": { "type": "integer" } }, { "name": "kasjer.id", "in": "query", "schema": { "type": "integer" } }, { "name": "kontrahent.id", "in": "query", "schema": { "type": "string" }, "description": "null lub maxnull" }, { "name": "towar.id", "in": "query", "schema": { "type": "integer" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/sprzedaz/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }],
+      "get": { "operationId": "getSprzedazById", "tags": ["Sprzedaz"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/id" }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/rapsprzed": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "getRapsprzed", "tags": ["Raporty"], "summary": "Sumaryczny raport sprzedaży", "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "name": "data_pocz", "in": "query", "schema": { "type": "string", "format": "date" }, "description": "Domyślnie 7 dni wstecz" }, { "name": "data_konc", "in": "query", "schema": { "type": "string", "format": "date" }, "description": "Domyślnie dziś" }, { "name": "grupowanie", "in": "query", "schema": { "type": "string", "enum": ["towar", "asort", "sklep", "kasa", "kasjer", "kontr", "kartarab", "formaplatn"] } }, { "name": "skladniki", "in": "query", "schema": { "type": "string" }, "description": "1,2,4,5,6,7,8 (domyślnie bez 3)" } ], "responses": { "200": { "description": "Tablica raportów (pierwszy = podsumowanie)" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/rappracy": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "getRappracy", "tags": ["Raporty"], "summary": "Raport czasu pracy kasjerów", "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "name": "data_pocz", "in": "query", "schema": { "type": "string", "format": "date" } }, { "name": "data_konc", "in": "query", "schema": { "type": "string", "format": "date" } }, { "name": "grupowanie", "in": "query", "schema": { "type": "string", "enum": ["sklep", "kasa", "kasjer"] } }], "responses": { "200": { "description": "Tablica (pierwszy rekord = podsumowanie)" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/f-karty-loj": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }],
+      "get": { "operationId": "listKartyLojalnosciowe", "tags": ["KartyLojalnosciowe"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "$ref": "#/components/parameters/start" }, { "$ref": "#/components/parameters/on_page" }, { "$ref": "#/components/parameters/fts" }, { "name": "kod", "in": "query", "schema": { "type": "string" } }, { "name": "typ", "in": "query", "schema": { "type": "integer" } }, { "name": "wazna_od", "in": "query", "schema": { "type": "string" } }, { "name": "wazna_do", "in": "query", "schema": { "type": "string" } }, { "name": "posiadacz", "in": "query", "schema": { "type": "string" } }, { "name": "nazwisko_imie", "in": "query", "schema": { "type": "string" } }, { "name": "telefon", "in": "query", "schema": { "type": "string" } }, { "name": "email", "in": "query", "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "post": { "operationId": "createKartaLojalnosciowa", "tags": ["KartyLojalnosciowe"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/KartaLojalnosciowa" } } }, "description": "Wymagane: telefon LUB email" }, "responses": { "201": { "description": "Utworzono" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateKartyLojalnosciowe", "tags": ["KartyLojalnosciowe"], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/KartaLojalnosciowa" } } } }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    },
+    "/{nazwa_konta}/f-karty-loj/{kod}": {
+      "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "name": "kod", "in": "path", "required": true, "schema": { "type": "string" } }],
+      "get": { "operationId": "getKartaLojalnosciowaByKod", "tags": ["KartyLojalnosciowe"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "name": "kod", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } },
+      "put": { "operationId": "updateKartaLojalnosciowaByKod", "tags": ["KartyLojalnosciowe"], "parameters": [{ "$ref": "#/components/parameters/nazwaKonta" }, { "name": "kod", "in": "path", "required": true, "schema": { "type": "string" } }], "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/KartaLojalnosciowa" } } }, "description": "uniewazniono = blokada karty" }, "responses": { "200": { "description": "OK" }, "401": { "description": "Błędna autoryzacja" } } }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic",
+        "description": "Nazwa użytkownika = nazwa konta (nazwa_konta), hasło z Administracja → Dane firmy → Baza danych"
+      }
+    },
+    "parameters": {
+      "nazwaKonta": {
+        "name": "nazwa_konta",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "Nazwa konta w usłudze NoviCloud"
+      },
+      "id": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "integer", "format": "int64" }
+      },
+      "start": {
+        "name": "start",
+        "in": "query",
+        "schema": { "type": "integer", "default": 0 },
+        "description": "Indeks pierwszego obiektu na stronie (0 do size-1)"
+      },
+      "on_page": {
+        "name": "on_page",
+        "in": "query",
+        "schema": { "type": "integer" },
+        "description": "Ilość obiektów na stronie"
+      },
+      "fts": {
+        "name": "fts",
+        "in": "query",
+        "schema": { "type": "string" },
+        "description": "Wyszukiwanie pełnotekstowe: fraza_1 fraza_2 (~ = dowolny ciąg)"
+      }
+    },
+    "schemas": {
+      "Link": {
+        "type": "object",
+        "description": "Zasób powiązany: id + link do zasobu",
+        "properties": {
+          "id": { "type": "integer", "format": "int64", "description": "Identyfikator zasobu powiązanego" },
+          "link": { "type": "string", "format": "uri", "description": "Adres URL do zasobu powiązanego" }
+        }
+      },
+      "PaginationLinks": {
+        "type": "object",
+        "properties": {
+          "self": { "type": "string", "format": "uri" },
+          "prev": { "type": "string", "format": "uri" },
+          "next": { "type": "string", "format": "uri" }
+        }
+      },
+      "ApiResponseCollection": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "integer", "description": "Kod statusu HTTP" },
+          "status_opis": { "type": "string" },
+          "size": { "type": "integer", "description": "Całkowita ilość obiektów w kolekcji" },
+          "start": { "type": "integer", "description": "Indeks pierwszego obiektu na stronie" },
+          "on_page": { "type": "integer", "description": "Ilość obiektów na stronie" },
+          "links": { "$ref": "#/components/schemas/PaginationLinks" },
+          "dane": { "type": "array", "items": { "type": "object" } }
+        }
+      },
+      "ApiResponseSingle": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "integer" },
+          "status_opis": { "type": "string" },
+          "dane": {}
+        }
+      },
+      "ApiResponseCreated": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "integer", "enum": [201] },
+          "status_opis": { "type": "string" },
+          "dane": { "$ref": "#/components/schemas/Link" }
+        }
+      },
+      "ErrorDetail": {
+        "type": "object",
+        "properties": {
+          "par_niewlasciwe": { "type": "array", "items": { "type": "string" } },
+          "par_bledna_wart": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "Towar": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "nazwa": { "type": "string" },
+          "kod": { "type": "string" },
+          "kody_dod": { "type": "array", "items": { "type": "object", "properties": { "kod": { "type": "string" }, "ile_w_opak": { "type": "number" }, "poziom_cen": { "type": "integer" } } } },
+          "stawka_vat": { "type": "integer", "description": "np. 2300 = 23%, -1 = zwolniona" },
+          "akcyzowy": { "type": "boolean" },
+          "typ": { "type": "integer", "enum": [0, 2, 4, 5, 6, 7, 8], "description": "0=zwykły, 2=paliwo, 4=winieta, 5=zestaw, 6=opakowanie, 7=usługa, 8=doładowanie" },
+          "cena_ew": { "type": "number", "format": "double" },
+          "cena_det": { "type": "number", "format": "double" },
+          "cena_hurt": { "type": "number", "format": "double" },
+          "cena_noc": { "type": "number", "format": "double" },
+          "cena_dod": { "type": "number", "format": "double" },
+          "przy_sprzedazy": { "type": "integer", "enum": [0, 1, 2], "description": "0=zamknięta, 1=otwarta, 2=rabat z karty" },
+          "ceny_w_sklepach": { "type": "array", "items": { "type": "object", "properties": { "sklep": { "$ref": "#/components/schemas/Link" }, "cena_det": { "type": "number" }, "cena_ew": { "type": "number" }, "cena_hurt": { "type": "number" }, "cena_noc": { "type": "number" }, "cena_dod": { "type": "number" }, "przy_sprzedazy": { "type": "integer" } } } },
+          "pkwiu": { "type": "string" },
+          "masa_wl": { "type": "number" },
+          "aktywny": { "type": "boolean" },
+          "jm": { "$ref": "#/components/schemas/Link" },
+          "asort": { "$ref": "#/components/schemas/Link" },
+          "opis_1": { "type": "string" }, "opis_2": { "type": "string" }, "opis_3": { "type": "string" }, "opis_4": { "type": "string" }, "opis_5": { "type": "string" },
+          "skladniki": { "type": "array", "description": "Dla zestawów (typ=5)", "items": { "type": "object" } },
+          "ost_zmiana": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Asortyment": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "nazwa": { "type": "string" },
+          "parent": { "$ref": "#/components/schemas/Link" }
+        }
+      },
+      "JednostkaMiary": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "nazwa": { "type": "string" },
+          "precyzja": { "type": "integer", "enum": [-2, -1, 0, 1, 2, 3], "description": "-2=ćwiartki, -1=połówki, 0=jedności, 1-3=dziesiętne" }
+        }
+      },
+      "StawkaVat": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "description": "np. 2300=23%, -1=zwolniona" },
+          "opis": { "type": "string" },
+          "etykieta": { "type": "string", "enum": ["A", "B", "C", "D", "E", "F", "G"] }
+        }
+      },
+      "Kontrahent": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "nazwa": { "type": "string" }, "nip": { "type": "string" }, "skrot": { "type": "string" },
+          "ulica": { "type": "string" }, "nr_domu": { "type": "string" }, "nr_lokalu": { "type": "string" }, "ulica_i_numer": { "type": "string" },
+          "kod_poczt": { "type": "string" }, "poczta": { "type": "string" }, "miasto": { "type": "string" }, "gmina": { "type": "string" }, "powiat": { "type": "string" }, "województwo": { "type": "string" },
+          "kraj": { "$ref": "#/components/schemas/Link" },
+          "telefon": { "type": "string" }, "email": { "type": "string" },
+          "aktywny": { "type": "boolean" },
+          "dostawca": { "type": "boolean" }, "staly": { "type": "boolean" }, "producent": { "type": "boolean" }, "odbiorca": { "type": "boolean" }, "osoba": { "type": "boolean" }
+        }
+      },
+      "Sklep": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "nazwa": { "type": "string" }, "nip": { "type": "string" }, "skrot": { "type": "string" }, "numer": { "type": "integer" },
+          "ulica": { "type": "string" }, "nr_domu": { "type": "string" }, "nr_lokalu": { "type": "string" }, "ulica_i_numer": { "type": "string" },
+          "kod_poczt": { "type": "string" }, "poczta": { "type": "string" }, "miasto": { "type": "string" }, "gmina": { "type": "string" }, "powiat": { "type": "string" }, "województwo": { "type": "string" },
+          "kraj": { "$ref": "#/components/schemas/Link" },
+          "telefon": { "type": "string" }, "email": { "type": "string" }, "bank": { "type": "string" }, "konto": { "type": "string" },
+          "aktywny": { "type": "boolean" }
+        }
+      },
+      "Kasa": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "nazwa": { "type": "string" }, "numer": { "type": "integer" }, "ecr": { "type": "string" },
+          "ostatnia_sync": { "type": "string", "format": "date-time" },
+          "ostatnia_sprzed": { "type": "string", "format": "date-time" },
+          "aktywny": { "type": "boolean" }
+        }
+      },
+      "Kasjer": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "nazwisko": { "type": "string" }, "kod_kasjera": { "type": "string" },
+          "aktywny": { "type": "boolean" }
+        }
+      },
+      "Waluta": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "nazwa": { "type": "string" }, "kod": { "type": "string" }, "kurs": { "type": "number" },
+          "domyslna": { "type": "boolean" }, "aktywny": { "type": "boolean" }
+        }
+      },
+      "Kraj": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "nazwa": { "type": "string" }, "kod": { "type": "string" },
+          "waluta": { "$ref": "#/components/schemas/Link" }
+        }
+      },
+      "FormaPlatnosci": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "nazwa": { "type": "string" },
+          "typ": { "type": "integer", "enum": [0, 1, 2, 3, 4, 5, 6], "description": "0=gotówka, 1=karta kredytowa, 2=karta płatnicza, 3=czek, 4=bon, 5=przelew, 6=inna" },
+          "reszta": { "type": "boolean" }
+        }
+      },
+      "Dokument": {
+        "type": "object",
+        "description": "Dokument (kasowy, odbiorcy, dostawcy, magazynowy, płatności)",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "typ_dok": { "type": "integer" },
+          "data_wystawienia": { "type": "string", "format": "date-time" },
+          "data_wplywu": { "type": "string", "format": "date" },
+          "data_wykonania": { "type": "string", "format": "date" },
+          "nr_dok": { "type": "string" }, "karta_rabatowa": { "type": "string" }, "nip_na_par": { "type": "string" },
+          "nr_systemowy": { "type": "string" }, "nr_fiskalny": { "type": "string" }, "nr_rap_dobowego": { "type": "string" }, "komentarz": { "type": "string" },
+          "sklep": { "$ref": "#/components/schemas/Link" }, "sklep_odb": { "$ref": "#/components/schemas/Link" },
+          "kontrahent": { "$ref": "#/components/schemas/Link" }, "platnik": { "$ref": "#/components/schemas/Link" },
+          "kasa": { "$ref": "#/components/schemas/Link" }, "kasjer": { "$ref": "#/components/schemas/Link" },
+          "storno": { "type": "boolean" },
+          "netto": { "type": "number" }, "podatek": { "type": "number" }, "brutto": { "type": "number" }, "rabat": { "type": "number" },
+          "rozbicie_vat": { "type": "array", "items": { "type": "object" } },
+          "forma_platn": { "$ref": "#/components/schemas/Link" }, "termin_platn": { "type": "string", "format": "date-time" }, "zaplacono": { "type": "number" },
+          "platnosci": { "type": "array", "items": { "type": "object" } }, "dotyczy": { "$ref": "#/components/schemas/Link" },
+          "korekty": { "type": "array", "items": { "$ref": "#/components/schemas/Link" } },
+          "faktury": { "type": "array", "items": { "$ref": "#/components/schemas/Link" } }, "dok_magazynowe": { "type": "array", "items": { "$ref": "#/components/schemas/Link" } }, "paragony": { "type": "array", "items": { "$ref": "#/components/schemas/Link" } },
+          "dok_roliczane": { "type": "array", "items": { "type": "object" } }, "pozycje": { "$ref": "#/components/schemas/Link" }
+        }
+      },
+      "Pozdok": {
+        "type": "object",
+        "description": "Pozycja dokumentu",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "dokument": { "$ref": "#/components/schemas/Link" },
+          "towar": { "$ref": "#/components/schemas/Link" },
+          "nr_pozycji": { "type": "integer" }, "ilosc": { "type": "number" }, "ilosc_pocz": { "type": "number" },
+          "stawka_vat": { "type": "integer" },
+          "c_przed_rab_netto": { "type": "number" }, "c_przed_rab_brutto": { "type": "number" },
+          "c_po_rab_netto": { "type": "number" }, "c_po_rab_brutto": { "type": "number" },
+          "rabat_kwota": { "type": "number" }, "w_netto": { "type": "number" }, "w_podatek": { "type": "number" }, "w_brutto": { "type": "number" },
+          "org_ilosc": { "type": "number" }, "org_c_przed_rab_netto": { "type": "number" }, "org_c_przed_rab_brutto": { "type": "number" },
+          "org_c_po_rab_netto": { "type": "number" }, "org_c_po_rab_brutto": { "type": "number" },
+          "org_rabat_kwota": { "type": "number" }, "org_w_netto": { "type": "number" }, "org_w_podatek": { "type": "number" }, "org_w_brutto": { "type": "number" },
+          "rozl_netto": { "type": "number" }, "rozl_podatek": { "type": "number" }, "rozl_brutto": { "type": "number" },
+          "storno": { "type": "boolean" }
+        }
+      },
+      "StanMagazynowy": {
+        "type": "object",
+        "properties": {
+          "towar": { "$ref": "#/components/schemas/Link" },
+          "sklep": { "$ref": "#/components/schemas/Link" },
+          "ilosc": { "type": "number" },
+          "w_c_zak_netto": { "type": "number" }, "w_c_zak_brutto": { "type": "number" },
+          "w_c_sprzed_netto": { "type": "number" }, "w_c_sprzed_brutto": { "type": "number" }
+        }
+      },
+      "Sprzedaz": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "data": { "type": "string", "format": "date-time" },
+          "nr_dok": { "type": "string" }, "typ_dok": { "type": "integer" },
+          "nr_systemowy": { "type": "string" }, "nr_fiskalny": { "type": "string" }, "nr_rap_dob": { "type": "string" },
+          "ilosc": { "type": "number" }, "cena": { "type": "number" }, "cena_przed_rab": { "type": "number" },
+          "stawka_vat": { "type": "integer" }, "brutto": { "type": "number" }, "podatek": { "type": "number" }, "rabat": { "type": "number" },
+          "towar": { "$ref": "#/components/schemas/Link" }, "sklep": { "$ref": "#/components/schemas/Link" },
+          "kasa": { "$ref": "#/components/schemas/Link" }, "kasjer": { "$ref": "#/components/schemas/Link" },
+          "kontrahent": { "$ref": "#/components/schemas/Link" },
+          "platnosci": { "type": "array", "items": { "type": "object" } }
+        }
+      },
+      "RaportSprzedazy": {
+        "type": "object",
+        "properties": {
+          "towar": { "$ref": "#/components/schemas/Link" }, "asort": { "$ref": "#/components/schemas/Link" },
+          "sklep": { "$ref": "#/components/schemas/Link" }, "kasa": { "$ref": "#/components/schemas/Link" }, "kasjer": { "$ref": "#/components/schemas/Link" },
+          "kontrahent": { "$ref": "#/components/schemas/Link" }, "karta_rabatowa": { "type": "string" }, "forma_platn": { "$ref": "#/components/schemas/Link" },
+          "ilosc": { "type": "number" }, "sprz_netto": { "type": "number" }, "sprz_brutto": { "type": "number" },
+          "sprz_zak_netto": { "type": "number" }, "sprz_zak_brutto": { "type": "number" },
+          "marza_netto": { "type": "number" }, "marza_brutto": { "type": "number" }, "marza_proc_netto": { "type": "number" }, "marza_proc_brutto": { "type": "number" },
+          "narzut_proc_netto": { "type": "number" }, "narzut_proc_brutto": { "type": "number" },
+          "rabat": { "type": "number" }, "rabat_proc": { "type": "number" }
+        }
+      },
+      "RaportPracyKasjerow": {
+        "type": "object",
+        "properties": {
+          "sklep": { "$ref": "#/components/schemas/Link" }, "kasa": { "$ref": "#/components/schemas/Link" }, "kasjer": { "$ref": "#/components/schemas/Link" },
+          "czas_pracy": { "type": "number", "description": "Milisekundy" },
+          "utarg": { "type": "number" }, "gotowka": { "type": "number" }, "karta": { "type": "number" }, "czek": { "type": "number" }, "bon": { "type": "number" }, "przelew": { "type": "number" }, "inna": { "type": "number" },
+          "paragony_ilosc": { "type": "number" }, "paragony_wartosc": { "type": "number" }, "paragony_pozycje": { "type": "number" },
+          "faktury_ilosc": { "type": "number" }, "faktury_wartosc": { "type": "number" }, "faktury_pozycje": { "type": "number" },
+          "storno_pozycje": { "type": "number" }, "storno_wartosc": { "type": "number" },
+          "paragony_anulowane_ilosc": { "type": "number" }, "paragony_anulowane_wartosc": { "type": "number" }
+        }
+      },
+      "KartaLojalnosciowa": {
+        "type": "object",
+        "properties": {
+          "kod": { "type": "string" }, "typ": { "type": "integer" },
+          "wazna_od": { "type": "string", "format": "date-time" }, "wazna_do": { "type": "string", "format": "date-time" },
+          "posiadacz": { "type": "string" }, "opis_1": { "type": "string" }, "opis_2": { "type": "string" },
+          "uniewazniono": { "type": "string", "format": "date-time" },
+          "nazwisko_imie": { "type": "string" }, "skrot": { "type": "string" },
+          "telefon": { "type": "string" }, "email": { "type": "string" },
+          "miejscowosc": { "type": "string" }, "ulica": { "type": "string" }, "nr_domu": { "type": "string" }, "nr_lokalu": { "type": "string" },
+          "kod_poczt": { "type": "string" }, "poczta": { "type": "string" }, "nip": { "type": "string" },
+          "data_urodz": { "type": "string", "format": "date" }, "plec": { "type": "string", "enum": ["K", "M"] }
+        }
+      }
+    }
+  }
+}

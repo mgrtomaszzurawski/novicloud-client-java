@@ -1,0 +1,26 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 1,
+  "start": 0,
+  "on_page": 1,
+  "links": {
+    "self": "http://localhost/demo/rapsprzed?start=0"
+  },
+  "dane": [
+    {
+      "sprz_netto": 1000.43,
+      "sprz_brutto": 1230.53,
+      "sprz_zak_netto": 600.41,
+      "sprz_zak_brutto": 738.5,
+      "marza_netto": 400.02,
+      "marza_brutto": 492.03,
+      "marza_proc_netto": 40.0,
+      "marza_proc_brutto": 40.0,
+      "narzut_proc_netto": 66.67,
+      "narzut_proc_brutto": 66.67,
+      "rabat": 50.13,
+      "rabat_proc": 3.92
+    }
+  ]
+}

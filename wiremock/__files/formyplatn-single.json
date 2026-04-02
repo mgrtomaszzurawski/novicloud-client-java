@@ -1,0 +1,11 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "dane": {
+    "id": 1,
+    "nazwa": "DUMMY_NAME",
+    "typ": 0,
+    "reszta": true,
+    "aktywny": true
+  }
+}

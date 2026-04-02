@@ -1,0 +1,42 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 2,
+  "start": 0,
+  "on_page": 2,
+  "links": {
+    "self": "http://localhost/demo/stanymag?start=0"
+  },
+  "dane": [
+    {
+      "towar": {
+        "id": "1",
+        "link": "http://localhost/demo/towary/1"
+      },
+      "sklep": {
+        "id": "1",
+        "link": "http://localhost/demo/sklepy/1"
+      },
+      "ilosc": 15.0,
+      "w_c_zak_netto": 10.0,
+      "w_c_zak_brutto": 12.3,
+      "w_c_sprzed_netto": 20.0,
+      "w_c_sprzed_brutto": 24.6
+    },
+    {
+      "towar": {
+        "id": "1",
+        "link": "http://localhost/demo/towary/1"
+      },
+      "sklep": {
+        "id": "945",
+        "link": "http://localhost/demo/sklepy/945"
+      },
+      "ilosc": 0.0,
+      "w_c_zak_netto": 0.0,
+      "w_c_zak_brutto": 0.0,
+      "w_c_sprzed_netto": 0.0,
+      "w_c_sprzed_brutto": 0.0
+    }
+  ]
+}

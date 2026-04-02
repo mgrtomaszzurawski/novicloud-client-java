@@ -1,0 +1,9 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "dane": {
+    "id": 2300,
+    "etykieta": "A",
+    "opis": "23 pct"
+  }
+}

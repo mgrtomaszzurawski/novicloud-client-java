@@ -1,0 +1,30 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 2,
+  "start": 0,
+  "on_page": 2,
+  "links": {
+    "self": "http://localhost/demo/kasy?start=0"
+  },
+  "dane": [
+    {
+      "id": 1,
+      "numer": 1,
+      "nazwa": "Register 1",
+      "ecr": "ECR-001",
+      "aktywny": true,
+      "ostatnia_sync": null,
+      "ostatnia_sprzed": "2026-01-15T18:00:00"
+    },
+    {
+      "id": 2,
+      "numer": 2,
+      "nazwa": "Register 2",
+      "ecr": "ECR-002",
+      "aktywny": true,
+      "ostatnia_sync": "2026-01-15T20:00:00",
+      "ostatnia_sprzed": "2026-01-15T19:30:00"
+    }
+  ]
+}

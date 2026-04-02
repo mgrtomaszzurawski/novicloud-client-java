@@ -1,0 +1,14 @@
+{
+  "status": 200,
+  "status_opis": "Ok",
+  "size": 2,
+  "start": 0,
+  "on_page": 2,
+  "links": {
+    "self": "http://localhost:4010/demo/jmiary?start=0"
+  },
+  "dane": [
+    { "id": 1, "nazwa": "DUMMY_NAME", "precyzja": 3 },
+    { "id": 2, "nazwa": "DUMMY_NAME_2", "precyzja": 3 }
+  ]
+}
