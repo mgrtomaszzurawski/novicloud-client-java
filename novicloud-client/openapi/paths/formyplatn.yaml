@@ -31,7 +31,11 @@ formaPlatnCollection:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   post:
     summary: Create payment method
@@ -57,7 +61,11 @@ formaPlatnCollection:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   put:
     summary: Update payment method (id in body)
@@ -83,7 +91,11 @@ formaPlatnCollection:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
 
 formaPlatnById:
@@ -108,7 +120,11 @@ formaPlatnById:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   put:
     summary: Update payment method by id
@@ -134,7 +150,11 @@ formaPlatnById:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   delete:
     summary: Delete payment method by id
@@ -154,5 +174,9 @@ formaPlatnById:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'

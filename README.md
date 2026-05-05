@@ -15,7 +15,7 @@ NoviCloud (Insoft Sp. z o.o.).
 <dependency>
     <groupId>io.github.mgrtomaszzurawski</groupId>
     <artifactId>novicloud-client</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -32,7 +32,8 @@ for (Towar t : client.towary().list(
 // Get single record by ID
 Towar product = client.towary().getById(42L);
 
-// Create (required fields enforced by builder constructor)
+// Create - required fields enforced by the builder factory (since 2.0.0)
+// Passing null for kod or nazwa throws NullPointerException locally.
 String newId = client.towary().create(
     TowarCreateBuilder.builder("KOD-001", "Product name").build()
 );
@@ -64,22 +65,21 @@ NoviCloudClient client = NoviCloudClient.create(
 
 By default the SDK retries on HTTP 429 (rate limit, respects `Retry-After` header)
 and HTTP 5xx (transient server errors) with exponential backoff + jitter, up to 3 attempts.
+**POST (create) operations are not retried by default** since NoviCloud does not
+document an idempotency guarantee. Opt in via `retryPost(true)` when the resource
+has a server-enforced unique key.
 
 ```java
 NoviCloudClient client = NoviCloudClient.builder()
     .retryPolicy(RetryPolicy.builder()
         .maxAttempts(5)
         .backoffStrategy(RetryPolicy.BackoffStrategy.FIXED)
-        .retryPost(false)   // at-most-once POST semantics
+        .retryPost(true)    // opt in only if duplicate handling is acceptable
         .build())
     .connectTimeout(Duration.ofSeconds(10))
     .readTimeout(Duration.ofMinutes(2))
     .build(accountName, password);
 ```
-
-POST is retried by default because the NoviCloud API enforces uniqueness on required fields -
-a retry after a 5xx that occurred before server commit creates the record normally; a retry
-after a committed-but-lost-response gets a 400/409 conflict, not a duplicate.
 
 ## Requirements
 
@@ -89,9 +89,9 @@ after a committed-but-lost-response gets a 400/409 conflict, not a duplicate.
 ## Build
 
 ```bash
-mvn clean verify                          # full build + 548 tests
+mvn clean verify                          # full build + 594 tests
 mvn spotbugs:check pmd:check checkstyle:check -pl novicloud-client,demo-app  # 0 violations
-mvn dependency-check:check -pl novicloud-client   # OWASP CVE scan (0 vulnerabilities as of v1.0.0)
+mvn dependency-check:check -pl novicloud-client   # OWASP CVE scan
 
 # Release build (GPG signing + Maven Central publishing)
 mvn clean deploy -Prelease -pl novicloud-client
@@ -105,17 +105,21 @@ novicloud-client/             SDK library (published to Maven Central)
   src/main/java/.../sdk/      Hand-written SDK code
     NoviCloudClient.java        Entry point - AutoCloseable facade with 18 resource accessors
     RetryPolicy.java            Configurable retry (429 + 5xx, exponential backoff + jitter)
-    RetryHandler.java           Retry loop with SLF4J logging
     exception/                  Typed exception hierarchy
     model/                      Immutable records (Towar, Asorty, Dokument, etc.)
-    paging/                     PagedResult, LinkFetcher
-    resources/                  18 endpoint packages (one per API resource)
-      towary/                     TowaryClient + TowarQueryBuilder + Create/UpdateBuilder
-      asorty/                     AsortyClient + ...
+    paging/                     PagedResult (public API)
+    resources/                  18 endpoint packages - public interfaces only
+      towary/                     TowaryClient interface + TowarQueryBuilder + Create/UpdateBuilder
+      asorty/                     AsortyClient interface + ...
       ...
+    internal/                   Non-exported implementation (since 2.0.0)
+      RetryHandler.java           Retry loop with SLF4J logging
+      mapper/RawMappers.java      Generated-to-record mapping
+      paging/LinkFetcher.java     Shared link-following pagination helper
+      resources/                  18 *ClientImpl classes
   src/test/java/
-    .../sdk/unit/               18 unit tests (null guards, count fallback, error propagation)
-    .../sdk/integration/        18 WireMock integration tests (HTTP round-trip, retry, errors)
+    .../sdk/unit/               18 unit test classes (null guards, count fallback, error propagation)
+    .../sdk/integration/        18 WireMock integration test classes (HTTP round-trip, retry, errors)
     .../sdk/builder/            Builder field round-trip + edge case tests
     .../sdk/TestConstants.java  Shared test constants (HTTP codes, headers, scenarios, indexes)
   src/test/resources/__files/   JSON fixtures for WireMock (35 files, 18 endpoint directories)
@@ -127,7 +131,7 @@ demo-app/                     Integration demo and live API smoke test
     service/DemoSession.java    Orchestrates runners, captures exceptions, produces report
     config/                     AppProperties, Credentials, DemoMode, SoftDeleteIds, SoftDeleteIdsCollector
 
-ADR/                          52 Architecture Decision Records
+ADR/                          59 Architecture Decision Records
 ADR-demo-app/                 10 demo-app specific decisions
 docs/                         Postman collection + API reference
 wiremock/                     WireMock stubs for local development (see wiremock/README.md)
@@ -170,25 +174,32 @@ parameters from builders to prevent callers from hitting server errors.
 ```
 NoviCloudException (base, unchecked)
   NoviCloudAuthException          401, 403
-  NoviCloudNotFoundException      404, 410
+  NoviCloudAccessException        402 (REST API option not subscribed)
+  NoviCloudNotFoundException      404, 410, or HTTP 200 with empty `dane`
   NoviCloudRateLimitException     429 (includes getRetryAfterSeconds())
   NoviCloudServerException        5xx
   NoviCloudNetworkException       IOException, timeout (no HTTP status)
 ```
 
-All SDK methods throw `NoviCloudException` or a subclass. The `RetryHandler` automatically
+All SDK methods throw `NoviCloudException` or a subclass. The retry handler automatically
 retries 429 and 5xx before surfacing the exception. Other error types are thrown immediately.
+
+POST requests are exempt from BOTH 5xx and 429 retry by default to avoid duplicate side
+effects on writes. Opt in via `RetryPolicy.builder().retryPost(true)` when the resource has
+a server-enforced unique key (so a duplicate-create surfaces as 400/409 instead of an extra
+record). The opt-in covers 429 and 5xx on POST together.
 
 ## Testing
 
 | Layer | Tests | Tool | What it covers |
 |-------|-------|------|---------------|
 | Unit | 117 | Mockito | Null guards, count() fallback logic, list() lazy construction, error propagation |
-| Integration | 193 | WireMock | Full HTTP: deserialization, retry recovery, exception mapping, pagination, request verification |
-| Builder | 139 | JUnit | Per-builder field round-trip, toBuilder() preservation, edge cases (dates, nulls, immutability) |
-| Other SDK | 65 | JUnit | RetryHandler, RetryPolicy, NoviCloudException, PagedResult, BuilderEdgeCases |
+| Integration | 206 | WireMock | Full HTTP: deserialization, retry recovery, error mapping (incl. 402, network failures, unknown enum, page-2 error body), pagination, request verification |
+| Builder | 151 | JUnit | Per-builder field round-trip, toBuilder() preservation, required-field NPE, kartyloj conditional, edge cases |
+| Record / mapper | 14 | JUnit | RawMappers nested record mapping, empty-list fallbacks, pozycjeId/Url niuans |
+| Other SDK | 72 | JUnit | RetryHandler (incl. POST 429 + Retry-After honour), RetryPolicy, NoviCloudException, NoviCloudErrorDetails, PagedResult, BuilderEdgeCases |
 | Demo-app | 34 | JUnit | DemoSession, RunReport, RunResult, DemoMode, SoftDeleteIds, AppProperties |
-| **Total** | **548** | | `mvn test` - no credentials or network needed |
+| **Total** | **594** | | `mvn test` - no credentials or network needed |
 
 All tests follow the `methodUnderTest_whenScenario_expectedResult` naming convention
 with `// given / when / then` structure in method bodies ([ADR-052](ADR/ADR-052-test-quality-standards.md)).
@@ -259,12 +270,15 @@ size parameter. `list()` returns `PagedResult<T>` with lazy pagination, metadata
 
 **Exported:** `sdk`, `sdk.model`, `sdk.resources.*` (18 packages), `sdk.exception`, `sdk.paging`
 
-**Not exported:** `client.api` (generated HTTP client), `client.model` (generated models),
-`client` (ApiClient internals)
+**Not exported (private to the module):**
+- `sdk.internal` and all `sdk.internal.*` sub-packages (RetryHandler, RawMappers, LinkFetcher, LinkUtils, 18 `*ClientImpl` classes)
+- `client`, `client.api`, `client.model` (transport layer)
+
+JPMS callers cannot import any of the above. See ADR-059 for the 2.0.0 design.
 
 ## Architecture Decision Records
 
-52 SDK decisions in [`ADR/`](ADR/), 10 demo-app decisions in [`ADR-demo-app/`](ADR-demo-app/).
+59 SDK decisions in [`ADR/`](ADR/), 10 demo-app decisions in [`ADR-demo-app/`](ADR-demo-app/).
 
 Key records:
 - [ADR-005](ADR/ADR-005-overlay-on-generated-client-code.md) - SDK overlay pattern on generated code

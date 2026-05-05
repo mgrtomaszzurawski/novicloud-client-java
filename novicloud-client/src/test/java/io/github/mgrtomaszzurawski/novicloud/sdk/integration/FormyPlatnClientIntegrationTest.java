@@ -117,6 +117,21 @@ class FormyPlatnClientIntegrationTest {
     }
 
     @Test
+    void getById_whenServerReturnsUnknownTypEnum_returnsRecordWithNullTyp() {
+        // given - CF-04: producer-introduced typ value (99) must not break deserialization
+        String json = "{\"status\":200,\"status_opis\":\"Ok\",\"dane\":{"
+                + "\"id\":1,\"nazwa\":\"future\",\"typ\":99,\"reszta\":true,\"aktywny\":true}}";
+        stubFor(get(urlPathMatching(URL_BY_ID)).willReturn(okJson(json)));
+
+        // when
+        FormaPlatn f = client.formyPlatn().getById(EXPECTED_FIRST_ID);
+
+        // then
+        assertNotNull(f);
+        assertNull(f.typ(), "unknown typ code must map to null, not throw");
+    }
+
+    @Test
     void create_whenServerAccepts_returnsCreatedId() {
         // given
         stubFor(post(urlPathMatching(URL_LIST))

@@ -5,6 +5,8 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.resources.waluty;
 
+import java.util.Objects;
+
 /**
  * Immutable data transfer object for creating a new waluta record. Required: {@code nazwa}, {@code kod}.
  *
@@ -77,7 +79,10 @@ public final class WalutaCreateBuilder {
         private Boolean domyslna;
         private Boolean aktywny;
 
-        private Builder(String nazwa, String kod) { this.nazwa = nazwa; this.kod = kod; }
+        private Builder(String nazwa, String kod) {
+            this.nazwa = Objects.requireNonNull(nazwa, "nazwa must not be null");
+            this.kod = Objects.requireNonNull(kod, "kod must not be null");
+        }
 
         /** Sets Record ID. @return this builder */
         public Builder id(Long id) { this.id = id; return this; }

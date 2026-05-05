@@ -26,6 +26,26 @@
       "id": "4",
       "link": "http://localhost/demo/asorty/4"
     },
+    "kody_dod": [
+      { "kod": "5901234567891", "ile_w_opak": 1.0, "poziom_cen": 1 },
+      { "kod": "5901234567892", "ile_w_opak": 6.0, "poziom_cen": 2 }
+    ],
+    "ceny_w_sklepach": [
+      { "sklep": { "id": "1" }, "cena_det": 17.5, "cena_hurt": 130.0, "przy_sprzedazy": 1 },
+      { "sklep": { "id": "2" }, "cena_det": 18.0 }
+    ],
+    "skladniki": [
+      {
+        "nazwa": "Main",
+        "cena": 25.0,
+        "obowiazkowy": true,
+        "wybor_wielu_tow": false,
+        "rozne_ceny": false,
+        "towary": [
+          { "towar": { "id": "100" }, "ilosc": 1.0, "cena_z_karty_tow": true, "cena": 25.0, "domyslny": true }
+        ]
+      }
+    ],
     "ost_zmiana": "2026-01-01T00:00:00"
   }
 }

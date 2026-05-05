@@ -3,12 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  * https://github.com/mgrtomaszzurawski/novicloud-client-java
  */
-package io.github.mgrtomaszzurawski.novicloud.sdk;
+package io.github.mgrtomaszzurawski.novicloud.sdk.internal;
 
 import io.github.mgrtomaszzurawski.novicloud.client.ApiException;
+import io.github.mgrtomaszzurawski.novicloud.sdk.RetryPolicy;
+import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudRateLimitException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudServerException;
-import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,9 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Executes API calls with automatic retry logic driven by a {@link RetryPolicy}.
  *
- * <p>Used internally by all resource clients. Not intended for direct use by application code.
+ * <p>Internal API since 2.0.0 (moved from {@code sdk} into the non-exported
+ * {@code sdk.internal} package). Used internally by all resource clients;
+ * not part of the SDK public surface.
  *
  * <p>Retry behaviour:
  * <ul>
@@ -26,11 +29,11 @@ import java.util.concurrent.ThreadLocalRandom;
  *       {@link RetryPolicy#maxRetryAfterSeconds()}.</li>
  *   <li>5xx (server error) - retried with exponential or fixed backoff.</li>
  *   <li>4xx (except 429), network errors - not retried.</li>
- *   <li>POST calls - retried only when {@link RetryPolicy#retryPost()} is {@code true}.</li>
+ *   <li>POST calls - 429 and 5xx are both retried only when
+ *       {@link RetryPolicy#retryPost()} is {@code true}.</li>
  * </ul>
  *
  * @see RetryPolicy
- * @since 1.0.0
  */
 public final class RetryHandler {
 
@@ -96,7 +99,7 @@ public final class RetryHandler {
 
     /**
      * Executes a POST (create) call with retry per policy.
-     * Whether 5xx errors are retried depends on {@link RetryPolicy#retryPost()}.
+     * Whether 429 and 5xx are retried depends on {@link RetryPolicy#retryPost()}.
      *
      * @param <T>     return type
      * @param call    the POST call to execute
@@ -127,7 +130,7 @@ public final class RetryHandler {
             try {
                 return call.call();
             } catch (ApiException e) {
-                throw NoviCloudException.of(message, e);
+                throw mapToSdk(message, e);
             }
         }
 
@@ -136,17 +139,21 @@ public final class RetryHandler {
             try {
                 return call.call();
             } catch (ApiException e) {
-                NoviCloudException sdk = NoviCloudException.of(message, e);
+                NoviCloudException sdk = mapToSdk(message, e);
                 boolean hasMoreAttempts = attempt < maxAttempts - NEXT_ATTEMPT_OFFSET;
 
-                if (sdk instanceof NoviCloudRateLimitException rl && policy.retryOn429() && hasMoreAttempts) {
+                if (sdk instanceof NoviCloudRateLimitException rl
+                        && policy.retryOn429()
+                        && shouldRetryPostHazard(isPost)
+                        && hasMoreAttempts)
+                {
                     long preferred = Math.min(rl.getRetryAfterSeconds(), policy.maxRetryAfterSeconds());
                     LOG.info(LOG_RATE_LIMITED, attempt + NEXT_ATTEMPT_OFFSET, maxAttempts, message);
                     LOG.debug(LOG_RATE_LIMIT_DETAILS, message, e);
                     sleep(preferred, attempt, policy.backoffStrategy());
                 } else if (sdk instanceof NoviCloudServerException
                         && policy.retryOn5xx()
-                        && shouldRetry5xx(isPost)
+                        && shouldRetryPostHazard(isPost)
                         && hasMoreAttempts)
                 {
                     LOG.info(LOG_SERVER_ERROR, e.getCode(), attempt + NEXT_ATTEMPT_OFFSET, maxAttempts, message);
@@ -161,23 +168,49 @@ public final class RetryHandler {
         throw new IllegalStateException(MSG_UNREACHABLE);
     }
 
-    private boolean shouldRetry5xx(boolean isPost) {
+    /**
+     * Adapts the generated {@link ApiException} to the SDK exception hierarchy
+     * via the neutral {@link NoviCloudException#of(String, Throwable, int,
+     * java.net.http.HttpHeaders, String)} signature. The internal package gets to
+     * see {@code ApiException}; the public {@code sdk.exception} package no
+     * longer does (CF-01, ADR-058).
+     */
+    private static NoviCloudException mapToSdk(String message, ApiException e) {
+        Throwable cause = e.getCause() != null ? e.getCause() : e;
+        return NoviCloudException.of(message, cause, e.getCode(), e.getResponseHeaders(), e.getResponseBody());
+    }
+
+    /**
+     * Whether a transient failure (429 or 5xx) is safe to retry.
+     *
+     * <p>Non-POST verbs are always safe to retry. POST is retried only when the
+     * caller has opted in via {@link RetryPolicy#retryPost()} - in which case
+     * both 429 and 5xx are retried; otherwise the SDK is at-most-once for POST.
+     */
+    private boolean shouldRetryPostHazard(boolean isPost) {
         return !isPost || policy.retryPost();
     }
 
+    /**
+     * Computes the sleep before the next retry attempt.
+     *
+     * <p>When the server supplies {@code Retry-After} ({@code preferredSeconds > 0})
+     * the SDK honours it as a hard minimum and does not jitter below it. Otherwise
+     * the backoff strategy applies symmetric jitter ({@code [base/2, base+1)}).
+     */
     private static void sleep(long preferredSeconds, int attempt, RetryPolicy.BackoffStrategy strategy) {
-        long baseSeconds;
+        long sleepMillis;
         if (preferredSeconds > NO_PREFERRED_WAIT) {
-            baseSeconds = preferredSeconds;
-        } else if (strategy == RetryPolicy.BackoffStrategy.EXPONENTIAL) {
-            baseSeconds = BASE_BACKOFF_SECONDS << attempt;
+            sleepMillis = preferredSeconds * MILLIS_PER_SECOND;
         } else {
-            baseSeconds = BASE_BACKOFF_SECONDS;
+            long backoffSeconds = strategy == RetryPolicy.BackoffStrategy.EXPONENTIAL
+                    ? BASE_BACKOFF_SECONDS << attempt
+                    : BASE_BACKOFF_SECONDS;
+            long baseMillis = backoffSeconds * MILLIS_PER_SECOND;
+            sleepMillis = ThreadLocalRandom.current().nextLong(baseMillis / JITTER_DIVISOR, baseMillis + JITTER_UPPER_OFFSET);
         }
-        long baseMillis = baseSeconds * MILLIS_PER_SECOND;
-        long jitteredMillis = ThreadLocalRandom.current().nextLong(baseMillis / JITTER_DIVISOR, baseMillis + JITTER_UPPER_OFFSET);
         try {
-            Thread.sleep(jitteredMillis);
+            Thread.sleep(sleepMillis);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }

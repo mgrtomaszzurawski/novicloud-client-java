@@ -5,6 +5,8 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.resources.kraje;
 
+import java.util.Objects;
+
 /**
  * Immutable data transfer object for creating a new kraj record. Required: {@code nazwa}, {@code kod}.
  *
@@ -65,7 +67,10 @@ public final class KrajCreateBuilder {
         private String kod;
         private String walutaId;
 
-        private Builder(String nazwa, String kod) { this.nazwa = nazwa; this.kod = kod; }
+        private Builder(String nazwa, String kod) {
+            this.nazwa = Objects.requireNonNull(nazwa, "nazwa must not be null");
+            this.kod = Objects.requireNonNull(kod, "kod must not be null");
+        }
 
         /** Sets Record ID. @return this builder */
         public Builder id(Long id) { this.id = id; return this; }

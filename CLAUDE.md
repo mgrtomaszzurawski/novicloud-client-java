@@ -20,7 +20,7 @@ If the agent breaks any rule from this file, it must immediately use `/digging-o
 ## Build and test commands
 
 ```bash
-# Full build + all 548 tests (no credentials needed)
+# Full build + all 589 tests (no credentials needed)
 mvn clean verify --no-transfer-progress
 
 # Static analysis (must pass with 0 violations)
@@ -52,17 +52,22 @@ The `-pl` flag targets specific modules: `mvn test -pl novicloud-client` runs SD
 
 The OpenAPI generator produces low-level HTTP client code at build time into `target/generated-sources/openapi/`. This code lives in packages `client.api` and `client.model`. It is never edited by hand.
 
-The hand-written SDK layer in `sdk/` wraps the generated code and adds: retry, pagination, exception mapping, typed builders, and null guards. Each of the 18 API resources has its own package under `sdk/resources/` containing:
-- `*Client.java` - resource client (e.g. `TowaryClient`) with CRUD methods
-- `*QueryBuilder.java` - filter parameters for list operations
-- `*CreateBuilder.java` - required fields enforced via constructor (for writable endpoints)
-- `*UpdateBuilder.java` - only ID required; other fields are optional partial update
+The hand-written SDK layer in `sdk/` wraps the generated code and adds: retry, pagination, exception mapping, typed builders, and null guards. Each of the 18 API resources splits its public surface across two packages (since 2.0.0, ADR-059):
+- `sdk/resources/<name>/` (exported via JPMS):
+  - `*Client.java` - public **interface** (e.g. `TowaryClient`) declaring CRUD methods
+  - `*QueryBuilder.java` - filter parameters for list operations
+  - `*CreateBuilder.java` - required fields enforced via constructor (for writable endpoints)
+  - `*UpdateBuilder.java` - only ID required; other fields are optional partial update
+- `sdk/internal/resources/<name>/` (NOT exported):
+  - `*ClientImpl.java` - implementation backing the interface; constructed only by `NoviCloudClient`
 
-Cross-cutting concerns live in shared classes:
-- `RetryHandler` + `RetryPolicy` - configurable retry for 429/5xx
-- `PagedResult` + `LinkFetcher` - lazy link-following pagination with random access (ADR-051)
-- `FlexibleLocalDateTimeDeserializer` - handles mixed date formats from server
-- `exception/` - typed exception hierarchy mapped from HTTP status codes
+Cross-cutting concerns:
+- `sdk.RetryPolicy` - public, configurable retry for 429/5xx
+- `sdk.internal.RetryHandler` - non-exported retry loop with SLF4J logging (since 2.0.0)
+- `sdk.paging.PagedResult` (public) + `sdk.internal.paging.LinkFetcher` (non-exported) - lazy link-following pagination with random access (ADR-051)
+- `sdk.internal.mapper.RawMappers` - non-exported generated-to-record mapping
+- `sdk.FlexibleLocalDateTimeDeserializer` - handles mixed date formats from server
+- `sdk.exception/` - typed exception hierarchy mapped from HTTP status codes
 
 ### JPMS
 
@@ -76,10 +81,25 @@ The source of truth is the modular spec at `novicloud-client/openapi/` (not the 
 
 ### Resource client structure
 
-Every `*Client.java` follows the same template. Use this as a reference when adding or modifying endpoints:
+Public contract is an interface in `sdk.resources.<name>`; implementation is a `final class` in non-exported `sdk.internal.resources.<name>`. Use this template when adding or modifying endpoints (since 2.0.0, ADR-059):
 
 ```java
-public final class TowaryClient {
+// sdk/resources/towary/TowaryClient.java - public interface
+package io.github.mgrtomaszzurawski.novicloud.sdk.resources.towary;
+
+public interface TowaryClient {
+    PagedResult<Towar> list(TowarQueryBuilder query);
+    int count(TowarQueryBuilder query);
+    Towar getById(Long id);
+    String create(TowarCreateBuilder builder);
+    void update(TowarUpdateBuilder builder);
+    void deleteById(Long id);
+}
+
+// sdk/internal/resources/towary/TowaryClientImpl.java - non-exported impl
+package io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.towary;
+
+public final class TowaryClientImpl implements TowaryClient {
 
     // Fields: always this trio + RetryHandler
     private final ApiClient apiClient;
@@ -93,7 +113,8 @@ public final class TowaryClient {
     private static final String FIELD_ID = "id";
 
     // Constructor: always (ApiClient, String accountName, RetryPolicy)
-    public TowaryClient(ApiClient apiClient, String accountName, RetryPolicy retryPolicy) {
+    // Called only from NoviCloudClient; not part of the public API.
+    public TowaryClientImpl(ApiClient apiClient, String accountName, RetryPolicy retryPolicy) {
         this.apiClient = apiClient;
         this.accountName = accountName;
         this.api = new TowaryApi(apiClient);
@@ -101,7 +122,7 @@ public final class TowaryClient {
     }
 ```
 
-Every client exposes these public methods (where the endpoint supports them):
+Every client interface exposes these public methods (where the endpoint supports them):
 - `list(QueryBuilder)` - returns `PagedResult<T>` with lazy pagination, random access (ADR-051)
 - `count(QueryBuilder)` - returns `int` from `size` field, fallback to `dane.size()`
 - `getById(Long)` - returns single entity, null-guarded with `requireNotNull`
@@ -117,7 +138,7 @@ Three methods, each for a different HTTP verb pattern:
 // GET, PUT, DELETE that return a value
 retryHandler.execute(() -> api.listTowary(accountName, ...), ERR_LIST_PAGE);
 
-// POST (create) - retryPost policy controls 5xx retry
+// POST (create) - retryPost policy controls both 5xx and 429 retry on POST
 retryHandler.executePost(() -> api.createTowar(accountName, body), ERR_CREATE);
 
 // PUT, DELETE that return void
@@ -192,12 +213,18 @@ TowarQueryBuilder safe = query != null ? query : TowarQueryBuilder.builder().bui
 
 ### Exception hierarchy
 
-`NoviCloudException.of(message, apiException)` maps HTTP status to typed subclass:
+`NoviCloudException.of(message, cause, statusCode, headers, body)` (since 2.0.0,
+neutral signature - no generated `ApiException` in the public API) maps HTTP
+status to typed subclass:
 - 401, 403 -> `NoviCloudAuthException`
-- 404, 410 -> `NoviCloudNotFoundException`
+- 402 -> `NoviCloudAccessException` (REST API option not subscribed; since 2.0.0)
+- 404, 410, or HTTP 200 with empty `dane` -> `NoviCloudNotFoundException`
 - 429 -> `NoviCloudRateLimitException` (parses `Retry-After` header)
 - 5xx -> `NoviCloudServerException`
-- network/IO -> `NoviCloudNetworkException`
+- code 0 with `IOException`/`InterruptedException` cause -> `NoviCloudNetworkException`
+
+`NoviCloudException.getErrorDetails(): Optional<NoviCloudErrorDetails>` (since 2.0.0)
+parses the HTTP 400 envelope and exposes `parNiewlasciwe` / `parBlednaWart` lists.
 
 All exceptions are unchecked (`RuntimeException`).
 
@@ -325,24 +352,33 @@ The server's PUT endpoint for stawkivat is broken. The SDK does not expose an up
 
 ## Adding a new endpoint
 
-Follow the existing pattern (each of the 18 endpoints is identical in structure):
+Follow the existing pattern (each of the 18 endpoints is identical in structure since 2.0.0, ADR-059):
 1. Add OpenAPI spec files: `openapi/paths/<name>.yaml`, `openapi/components/schemas/<name>.yaml`, `openapi/components/parameters/<name>.yaml`
 2. Reference the new path in `openapi/openapi.yaml`
-3. Create `sdk/resources/<name>/` with Client + Query/Create/Update builders (copy from an existing endpoint like `asorty` for hard-delete or `towary` for soft-delete)
-4. Create immutable record in `sdk/model/` with `from(XRaw)` factory (ADR-046)
-5. Wire record into Client: `getById()` returns record, `list()` returns `PagedResult<T>` (ADR-051)
-6. Add accessor method to `NoviCloudClient.java` (field + constructor init + public accessor)
-7. Export the resource package in `module-info.java`
-8. Add unit test, integration test, and builder tests (follow the existing test class templates)
-9. Add a runner in `demo-app/` if needed
+3. Create `sdk/resources/<name>/` with the **public interface** `*Client.java` plus Query/Create/Update builders (copy from an existing endpoint like `asorty` for hard-delete or `towary` for soft-delete). The interface declares the public method signatures only - no fields, no constructor.
+4. Create the implementation `*ClientImpl.java` in non-exported `sdk/internal/resources/<name>/` (`public final class FooClientImpl implements FooClient`). The impl holds the `ApiClient`, generated `*Api`, account name, and `RetryHandler` fields and is constructed only by `NoviCloudClient`.
+5. Create immutable record in `sdk/model/` (data-only - no `from()` factory)
+6. Add a `static <Record> to<Record>(<Record>Raw)` mapping method in
+   `sdk/internal/mapper/RawMappers.java` (since 2.0.0, ADR-058; replaces the
+   old per-record `from(XRaw)` factories)
+7. Wire record into the impl: `getById()` returns the record (call
+   `RawMappers.to<Record>(raw)`), `list()` returns `PagedResult<T>` (ADR-051)
+8. Add accessor method to `NoviCloudClient.java` (field of the **interface** type, constructor init that instantiates `*ClientImpl`, public accessor returning the interface)
+9. Export ONLY the resource interface package in `module-info.java` (`exports sdk.resources.<name>;`). Do NOT export `sdk.internal.*` packages.
+10. Add unit test, integration test, and builder tests (follow the existing
+    test class templates) plus a `RawMappers` test if the record has nested
+    structures or enums
+11. Add a runner in `demo-app/` if needed
 
 ## Known issues
 
-- Nested composite types (Platnosc, RozbicieVat, TowarSkladnik) not wrapped in records yet
+- (resolved in 2.0.0) Nested composite types are now wrapped: `Platnosc`,
+  `DokumentRozbicieVat`, `DokumentRozliczany`, `TowarKodDodatkowy`,
+  `TowarCenaWSklepie`, `TowarSkladnik`, `TowarSkladnikTowar` live in `sdk.model`
 
 ## ADRs
 
-52 SDK decisions in `ADR/`, 10 demo-app decisions in `ADR-demo-app/`. Consult these before making architectural changes - many decisions document server-side bugs and API quirks that constrain the design.
+59 SDK decisions in `ADR/`, 10 demo-app decisions in `ADR-demo-app/`. Consult these before making architectural changes - many decisions document server-side bugs and API quirks that constrain the design.
 
 Key records:
 - ADR-005: SDK overlay pattern on generated code
@@ -362,6 +398,9 @@ Key records:
 - ADR-D010: Demo-app mode toggle (READ_ONLY, CRUD_SAFE, CREATE_SOFT, CRUD_ALL)
 - ADR-051: PagedResult - random access pagination (replaces PagedIterable)
 - ADR-052: Test quality standards (naming, structure, TestConstants)
+- ADR-056: Deprecate internal leak surface (sdk.RetryHandler, ApiException-typed signatures)
+- ADR-058: Codex round-4 internal cleanup (sdk.internal.* hidden packages, neutral exception of())
+- ADR-059: 2.0.0 release decision (interfaces in sdk.resources.*, impls in sdk.internal.resources.*)
 
 ## Additional context
 

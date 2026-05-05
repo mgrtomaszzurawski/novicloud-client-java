@@ -11,6 +11,7 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponsePozdokListR
 import io.github.mgrtomaszzurawski.novicloud.client.model.PozycjaDokumentuRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.pozdok.PozdokClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.pozdok.PozdokClientImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
@@ -26,7 +27,7 @@ import static io.github.mgrtomaszzurawski.novicloud.sdk.TestConstants.*;
 class PozdokClientTest {
 
     private PozdokClient client() {
-        return new PozdokClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+        return new PozdokClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
     }
 
     @Test
@@ -56,7 +57,7 @@ class PozdokClientTest {
         // when
         try (MockedConstruction<PozdokApi> mc = mockConstructionWithAnswer(PozdokApi.class,
                 inv -> response)) {
-            int result = new PozdokClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new PozdokClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_LIST_COUNT, result);
@@ -72,7 +73,7 @@ class PozdokClientTest {
         // when
         try (MockedConstruction<PozdokApi> mc = mockConstructionWithAnswer(PozdokApi.class,
                 inv -> response)) {
-            int result = new PozdokClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new PozdokClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(EXPECTED_ZERO, result);
@@ -89,7 +90,7 @@ class PozdokClientTest {
         // when
         try (MockedConstruction<PozdokApi> mc = mockConstructionWithAnswer(PozdokApi.class,
                 inv -> response)) {
-            int result = new PozdokClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new PozdokClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_REPORTED_SIZE, result);
@@ -102,7 +103,7 @@ class PozdokClientTest {
         // given
         try (MockedConstruction<PozdokApi> mc = mockConstructionWithAnswer(PozdokApi.class,
                 inv -> { throw apiServerError(); })) {
-            var client = new PozdokClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+            var client = new PozdokClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
 
             // when / then
             assertThrows(NoviCloudException.class, () -> client.count(null));

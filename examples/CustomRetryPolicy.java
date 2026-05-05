@@ -12,7 +12,10 @@ import java.time.Duration;
 
 /**
  * Configure retry behavior: attempts, backoff, timeouts.
- * Default: 3 attempts, exponential backoff, retry on 429 and 5xx.
+ * Default: 3 attempts, exponential backoff, retry on 429 and 5xx for GET/PUT/DELETE.
+ * POST is exempt from BOTH 5xx and 429 retry by default to avoid duplicate side effects;
+ * opt in via retryPost(true) only when the resource has a server-enforced unique key
+ * (so a duplicate-create surfaces as 400/409 instead of an extra record).
  */
 public class CustomRetryPolicy {
 

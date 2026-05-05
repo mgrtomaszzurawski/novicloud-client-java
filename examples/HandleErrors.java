@@ -7,6 +7,7 @@ package examples;
 
 import io.github.mgrtomaszzurawski.novicloud.sdk.NoviCloudClient;
 import io.github.mgrtomaszzurawski.novicloud.sdk.model.Towar;
+import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudAccessException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudAuthException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudNotFoundException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudRateLimitException;
@@ -34,6 +35,9 @@ public class HandleErrors {
             } catch (NoviCloudAuthException e) {
                 // 401/403 - bad credentials
                 System.out.println("Auth failed (HTTP " + e.getStatusCode() + ")");
+            } catch (NoviCloudAccessException e) {
+                // 402 - REST API option not subscribed for this account
+                System.out.println("API option not subscribed (HTTP " + e.getStatusCode() + ")");
             } catch (NoviCloudRateLimitException e) {
                 // 429 - rate limited (SDK already retried per RetryPolicy)
                 System.out.println("Rate limited, retry after " + e.getRetryAfterSeconds() + "s");

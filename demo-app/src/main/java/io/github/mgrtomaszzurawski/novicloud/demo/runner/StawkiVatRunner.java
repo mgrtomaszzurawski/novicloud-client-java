@@ -10,6 +10,7 @@ import io.github.mgrtomaszzurawski.novicloud.sdk.model.StawkaVat;
 import io.github.mgrtomaszzurawski.novicloud.demo.runner.api.EndpointRunner;
 import io.github.mgrtomaszzurawski.novicloud.sdk.NoviCloudClient;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
+import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,6 @@ import static io.github.mgrtomaszzurawski.novicloud.demo.runner.api.RunnerHelper
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.stawkivat.StawkiVatClient;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.stawkivat.StawkaVatQueryBuilder;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.stawkivat.StawkaVatCreateBuilder;
-import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudNotFoundException;
 
 import io.github.mgrtomaszzurawski.novicloud.sdk.paging.PagedResult;
 import java.util.Iterator;
@@ -112,11 +112,14 @@ public final class StawkiVatRunner implements EndpointRunner {
                 .opis(DEMO_OPIS).etykieta(DEMO_ETYKIETA).build());
         LOG.info(LOG_CUD_CREATE, ENDPOINT, DEMO_ID, DEMO_OPIS, DEMO_ETYKIETA, createdId);
         StawkaVat fetched = api.getById((long) DEMO_ID);
-        LOG.info(LOG_CUD_GET_BY_ID, ENDPOINT, DEMO_ID, fetched.id(), fetched.opis(), fetched.etykieta());
-        verifyField(ENDPOINT, FIELD_ID, DEMO_ID, fetched.id());
-        LOG.info(LOG_CUD_OPIS, ENDPOINT, DEMO_OPIS, fetched.opis());
+        Integer fetchedId = fetched.id();
+        String fetchedOpis = fetched.opis();
+        var fetchedEtykieta = fetched.etykieta();
+        LOG.info(LOG_CUD_GET_BY_ID, ENDPOINT, DEMO_ID, fetchedId, fetchedOpis, fetchedEtykieta);
+        verifyField(ENDPOINT, FIELD_ID, DEMO_ID, fetchedId);
+        LOG.info(LOG_CUD_OPIS, ENDPOINT, DEMO_OPIS, fetchedOpis);
         verifyField(ENDPOINT, FIELD_ETYKIETA, DEMO_ETYKIETA,
-                fetched.etykieta() != null ? fetched.etykieta().code() : null);
+                fetchedEtykieta != null ? fetchedEtykieta.code() : null);
         api.deleteById((long) DEMO_ID);
         LOG.info(LOG_CUD_DELETE, ENDPOINT, DEMO_ID);
         verifyDeleteBehavior(api, (long) DEMO_ID);
@@ -134,11 +137,11 @@ public final class StawkiVatRunner implements EndpointRunner {
     }
 
     private void verifyDeleteBehavior(StawkiVatClient api, Long id) {
-        var response = api.getById(id);
-        if (response == null) {
-            LOG.info(LOG_CUD_HARD_DELETE, ENDPOINT, id);
-        } else {
+        try {
+            api.getById(id);
             LOG.info(LOG_CUD_SOFT_DELETE, ENDPOINT, id);
+        } catch (NoviCloudNotFoundException expected) {
+            LOG.info(LOG_CUD_HARD_DELETE, ENDPOINT, id);
         }
     }
 

@@ -6,7 +6,15 @@
 
 KartaLojalnosciowa:
   type: object
-  description: Loyalty card resource. The 'kod' field is both the card number and the resource ID.
+  description: |
+    Loyalty card resource. The 'kod' field is both the card number and the resource ID.
+    For POST: 'kod' and 'nazwisko_imie' are required, plus at least one of 'telefon' or 'email'.
+    OpenAPI lacks an idiomatic way to express "at least one of X or Y", so the conditional
+    contact-channel requirement is enforced at the SDK level (see KartaLojCreateBuilder.build())
+    and produces an HTTP 400 from the server otherwise.
+  required:
+    - kod
+    - nazwisko_imie
   properties:
     kod:
       type: string

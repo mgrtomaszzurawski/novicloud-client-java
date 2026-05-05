@@ -110,6 +110,21 @@ class JmiaryClientIntegrationTest {
     }
 
     @Test
+    void getById_whenServerReturnsUnknownPrecyzjaEnum_returnsRecordWithNullPrecyzja() {
+        // given - CF-04: producer-introduced precyzja value (99) must not break deserialization
+        String json = "{\"status\":200,\"status_opis\":\"Ok\",\"dane\":{"
+                + "\"id\":1,\"nazwa\":\"sztuka\",\"precyzja\":99}}";
+        stubFor(get(urlPathMatching(URL_BY_ID)).willReturn(okJson(json)));
+
+        // when
+        Jmiary j = client.jmiary().getById(EXPECTED_FIRST_ID);
+
+        // then
+        assertNotNull(j);
+        assertNull(j.precyzja(), "unknown precyzja code must map to null, not throw");
+    }
+
+    @Test
     void create_whenServerAccepts_returnsCreatedId() {
         // given
         stubFor(post(urlPathMatching(URL_LIST))

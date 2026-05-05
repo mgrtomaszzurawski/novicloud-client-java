@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  * https://github.com/mgrtomaszzurawski/novicloud-client-java
  */
-package io.github.mgrtomaszzurawski.novicloud.sdk.paging;
+package io.github.mgrtomaszzurawski.novicloud.sdk.internal.paging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.mgrtomaszzurawski.novicloud.client.ApiClient;
@@ -15,25 +15,18 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.function.Consumer;
 
 /**
- * Fetches a page response by following an absolute pagination link.
+ * Internal helper used by the 18 resource clients to follow {@code links.next}
+ * pagination URLs.
  *
- * <p>Every resource client needs to follow {@code links.next} URLs for pagination.
- * The HTTP logic (headers, timeout, auth, deserialization, error handling) is identical
- * across all 18 endpoints. This helper eliminates that duplication.
- *
- * <p>Usage in a resource client:
- * <pre>{@code
- * private ApiResponseTowaryList doFetchByLink(String link) throws ApiException {
- *     return LinkFetcher.fetch(link, apiClient, ApiResponseTowaryList.class);
- * }
- * }</pre>
- * @since 1.0.0
+ * <p>Lives in a non-exported package since 2.0.0 (see ADR-057). Not part of the
+ * public SDK surface.
  */
 public final class LinkFetcher {
 
@@ -56,9 +49,9 @@ public final class LinkFetcher {
      * @param link         the absolute URL (from {@code links.next} in a page response)
      * @param apiClient    the configured API client (provides httpClient, objectMapper, interceptor, timeout)
      * @param responseType the target class for Jackson deserialization
-     * @param <P>          the page response type (e.g. {@code ApiResponseTowaryList})
+     * @param <P>          the page response type (e.g. {@code ApiResponseTowaryListRaw})
      * @return the deserialized page response
-     * @throws ApiException on HTTP error responses
+     * @throws ApiException on HTTP error responses (with body preserved as of 2.0.0)
      * @throws NoviCloudNetworkException on I/O or thread interruption
      */
     public static <P> P fetch(String link, ApiClient apiClient, Class<P> responseType) throws ApiException {
@@ -81,7 +74,8 @@ public final class LinkFetcher {
                     .send(request, HttpResponse.BodyHandlers.ofInputStream());
             try (InputStream body = response.body()) {
                 if (response.statusCode() < HTTP_OK_MIN || response.statusCode() > HTTP_OK_MAX) {
-                    throw new ApiException(response.statusCode(), ERR_LINK_CALL, response.headers(), null);
+                    String bodyText = new String(body.readAllBytes(), StandardCharsets.UTF_8);
+                    throw new ApiException(response.statusCode(), ERR_LINK_CALL, response.headers(), bodyText);
                 }
                 return objectMapper.readValue(body, responseType);
             }

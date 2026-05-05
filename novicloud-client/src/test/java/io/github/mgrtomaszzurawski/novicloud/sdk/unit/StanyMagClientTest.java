@@ -11,6 +11,7 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseStanyMagLis
 import io.github.mgrtomaszzurawski.novicloud.client.model.StanMagRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.stanymag.StanyMagClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.stanymag.StanyMagClientImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
@@ -27,7 +28,7 @@ class StanyMagClientTest {
     private static final long VALID_ID = 1L;
 
     private StanyMagClient client() {
-        return new StanyMagClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+        return new StanyMagClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
     }
 
     @Test
@@ -77,7 +78,7 @@ class StanyMagClientTest {
         // when
         try (MockedConstruction<StanyMagApi> mc = mockConstructionWithAnswer(StanyMagApi.class,
                 inv -> response)) {
-            int result = new StanyMagClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new StanyMagClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_LIST_COUNT, result);
@@ -93,7 +94,7 @@ class StanyMagClientTest {
         // when
         try (MockedConstruction<StanyMagApi> mc = mockConstructionWithAnswer(StanyMagApi.class,
                 inv -> response)) {
-            int result = new StanyMagClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new StanyMagClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(EXPECTED_ZERO, result);
@@ -110,7 +111,7 @@ class StanyMagClientTest {
         // when
         try (MockedConstruction<StanyMagApi> mc = mockConstructionWithAnswer(StanyMagApi.class,
                 inv -> response)) {
-            int result = new StanyMagClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new StanyMagClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_REPORTED_SIZE, result);
@@ -123,7 +124,7 @@ class StanyMagClientTest {
         // given
         try (MockedConstruction<StanyMagApi> mc = mockConstructionWithAnswer(StanyMagApi.class,
                 inv -> { throw apiServerError(); })) {
-            var client = new StanyMagClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+            var client = new StanyMagClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
 
             // when / then
             assertThrows(NoviCloudException.class, () -> client.count(null));

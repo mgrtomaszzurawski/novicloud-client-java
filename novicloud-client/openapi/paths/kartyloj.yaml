@@ -37,7 +37,11 @@ kartaLojCollection:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   post:
     summary: Create loyalty card
@@ -63,7 +67,11 @@ kartaLojCollection:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   put:
     summary: Update loyalty card (kod in body)
@@ -89,7 +97,11 @@ kartaLojCollection:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
 
 kartaLojByKod:
@@ -114,7 +126,11 @@ kartaLojByKod:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   put:
     summary: Update loyalty card by kod
@@ -140,5 +156,9 @@ kartaLojByKod:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'

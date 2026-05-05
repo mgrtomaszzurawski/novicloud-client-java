@@ -7,24 +7,43 @@ package io.github.mgrtomaszzurawski.novicloud.sdk;
 
 import io.github.mgrtomaszzurawski.novicloud.client.ApiClient;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.asorty.AsortyClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.asorty.AsortyClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.dokumenty.DokumentyClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.dokumenty.DokumentyClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.formyplatn.FormyPlatnClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.formyplatn.FormyPlatnClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.jmiary.JmiaryClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.jmiary.JmiaryClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.kartyloj.KartyLojClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.kartyloj.KartyLojClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.kasjerzy.KasjerzyClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.kasjerzy.KasjerzyClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.kasy.KasyClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.kasy.KasyClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.kontrahenci.KontrahenciClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.kontrahenci.KontrahenciClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.kraje.KrajeClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.kraje.KrajeClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.pozdok.PozdokClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.pozdok.PozdokClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.rappracy.RapPracyClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.rappracy.RapPracyClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.rapsprzed.RapSprzedClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.rapsprzed.RapSprzedClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.sklepy.SklepyClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.sklepy.SklepyClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.sprzedaz.SprzedazClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.sprzedaz.SprzedazClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.stanymag.StanyMagClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.stanymag.StanyMagClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.stawkivat.StawkiVatClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.stawkivat.StawkiVatClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.towary.TowaryClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.towary.TowaryClientImpl;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.waluty.WalutyClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.waluty.WalutyClientImpl;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import java.nio.charset.StandardCharsets;
@@ -68,7 +87,7 @@ import java.util.Objects;
  */
 public final class NoviCloudClient implements AutoCloseable {
 
-    private static final String USER_AGENT = "novicloud-client-java/1.0.0";
+    private static final String USER_AGENT = "novicloud-client-java/2.0.0";
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String HEADER_USER_AGENT = "User-Agent";
     private static final String BASIC_AUTH_PREFIX = "Basic ";
@@ -101,24 +120,24 @@ public final class NoviCloudClient implements AutoCloseable {
 
     private NoviCloudClient(ApiClient apiClient, String accountName, RetryPolicy retryPolicy) {
         RetryPolicy policy = retryPolicy != null ? retryPolicy : RetryPolicy.defaultPolicy();
-        this.towaryClient = new TowaryClient(apiClient, accountName, policy);
-        this.asortyClient = new AsortyClient(apiClient, accountName, policy);
-        this.jmiaryClient = new JmiaryClient(apiClient, accountName, policy);
-        this.stawkiVatClient = new StawkiVatClient(apiClient, accountName, policy);
-        this.walutyClient = new WalutyClient(apiClient, accountName, policy);
-        this.krajeClient = new KrajeClient(apiClient, accountName, policy);
-        this.formyPlatnClient = new FormyPlatnClient(apiClient, accountName, policy);
-        this.kontrahenciClient = new KontrahenciClient(apiClient, accountName, policy);
-        this.sklepyClient = new SklepyClient(apiClient, accountName, policy);
-        this.kasyClient = new KasyClient(apiClient, accountName, policy);
-        this.kasjerzyClient = new KasjerzyClient(apiClient, accountName, policy);
-        this.dokumentyClient = new DokumentyClient(apiClient, accountName, policy);
-        this.pozdokClient = new PozdokClient(apiClient, accountName, policy);
-        this.stanyMagClient = new StanyMagClient(apiClient, accountName, policy);
-        this.sprzedazClient = new SprzedazClient(apiClient, accountName, policy);
-        this.rapSprzedClient = new RapSprzedClient(apiClient, accountName, policy);
-        this.rapPracyClient = new RapPracyClient(apiClient, accountName, policy);
-        this.kartyLojClient = new KartyLojClient(apiClient, accountName, policy);
+        this.towaryClient = new TowaryClientImpl(apiClient, accountName, policy);
+        this.asortyClient = new AsortyClientImpl(apiClient, accountName, policy);
+        this.jmiaryClient = new JmiaryClientImpl(apiClient, accountName, policy);
+        this.stawkiVatClient = new StawkiVatClientImpl(apiClient, accountName, policy);
+        this.walutyClient = new WalutyClientImpl(apiClient, accountName, policy);
+        this.krajeClient = new KrajeClientImpl(apiClient, accountName, policy);
+        this.formyPlatnClient = new FormyPlatnClientImpl(apiClient, accountName, policy);
+        this.kontrahenciClient = new KontrahenciClientImpl(apiClient, accountName, policy);
+        this.sklepyClient = new SklepyClientImpl(apiClient, accountName, policy);
+        this.kasyClient = new KasyClientImpl(apiClient, accountName, policy);
+        this.kasjerzyClient = new KasjerzyClientImpl(apiClient, accountName, policy);
+        this.dokumentyClient = new DokumentyClientImpl(apiClient, accountName, policy);
+        this.pozdokClient = new PozdokClientImpl(apiClient, accountName, policy);
+        this.stanyMagClient = new StanyMagClientImpl(apiClient, accountName, policy);
+        this.sprzedazClient = new SprzedazClientImpl(apiClient, accountName, policy);
+        this.rapSprzedClient = new RapSprzedClientImpl(apiClient, accountName, policy);
+        this.rapPracyClient = new RapPracyClientImpl(apiClient, accountName, policy);
+        this.kartyLojClient = new KartyLojClientImpl(apiClient, accountName, policy);
     }
 
     /**
@@ -300,7 +319,9 @@ public final class NoviCloudClient implements AutoCloseable {
                     .header(HEADER_USER_AGENT, USER_AGENT));
             SimpleModule flexibleDates = new SimpleModule();
             flexibleDates.addDeserializer(LocalDateTime.class, new FlexibleLocalDateTimeDeserializer());
-            apiClient.setObjectMapper(apiClient.getObjectMapper().registerModule(flexibleDates));
+            apiClient.setObjectMapper(apiClient.getObjectMapper()
+                    .registerModule(flexibleDates)
+                    .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true));
             return new NoviCloudClient(apiClient, accountName, retryPolicy);
         }
 

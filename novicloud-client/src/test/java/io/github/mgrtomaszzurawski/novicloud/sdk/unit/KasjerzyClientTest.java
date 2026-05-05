@@ -11,6 +11,7 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseKasjerzyLis
 import io.github.mgrtomaszzurawski.novicloud.client.model.KasjerRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.kasjerzy.KasjerzyClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.kasjerzy.KasjerzyClientImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
@@ -26,7 +27,7 @@ import static io.github.mgrtomaszzurawski.novicloud.sdk.TestConstants.*;
 class KasjerzyClientTest {
 
     private KasjerzyClient client() {
-        return new KasjerzyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+        return new KasjerzyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
     }
 
     @Test
@@ -56,7 +57,7 @@ class KasjerzyClientTest {
         // when
         try (MockedConstruction<KasjerzyApi> mc = mockConstructionWithAnswer(KasjerzyApi.class,
                 inv -> response)) {
-            int result = new KasjerzyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new KasjerzyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_LIST_COUNT, result);
@@ -72,7 +73,7 @@ class KasjerzyClientTest {
         // when
         try (MockedConstruction<KasjerzyApi> mc = mockConstructionWithAnswer(KasjerzyApi.class,
                 inv -> response)) {
-            int result = new KasjerzyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new KasjerzyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(EXPECTED_ZERO, result);
@@ -89,7 +90,7 @@ class KasjerzyClientTest {
         // when
         try (MockedConstruction<KasjerzyApi> mc = mockConstructionWithAnswer(KasjerzyApi.class,
                 inv -> response)) {
-            int result = new KasjerzyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new KasjerzyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_REPORTED_SIZE, result);
@@ -102,7 +103,7 @@ class KasjerzyClientTest {
         // given
         try (MockedConstruction<KasjerzyApi> mc = mockConstructionWithAnswer(KasjerzyApi.class,
                 inv -> { throw apiServerError(); })) {
-            var client = new KasjerzyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+            var client = new KasjerzyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
 
             // when / then
             assertThrows(NoviCloudException.class, () -> client.count(null));

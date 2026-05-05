@@ -10,6 +10,7 @@ import io.github.mgrtomaszzurawski.novicloud.sdk.model.Asorty;
 import io.github.mgrtomaszzurawski.novicloud.demo.runner.api.EndpointRunner;
 import io.github.mgrtomaszzurawski.novicloud.sdk.NoviCloudClient;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
+import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,8 +127,10 @@ public final class AsortyRunner implements EndpointRunner {
 
         // 2. Verify via getById
         var fetched = api.getById(id);
-        LOG.info(LOG_CUD_GET_BY_ID, ENDPOINT, id, fetched.nazwa(), fetched.parentId());
-        verifyField(ENDPOINT, FIELD_NAZWA, DEMO_NAZWA, fetched.nazwa());
+        String fetchedNazwa = fetched.nazwa();
+        String fetchedParent = fetched.parentId();
+        LOG.info(LOG_CUD_GET_BY_ID, ENDPOINT, id, fetchedNazwa, fetchedParent);
+        verifyField(ENDPOINT, FIELD_NAZWA, DEMO_NAZWA, fetchedNazwa);
 
         // 3. Update all mutable fields
         api.update(AsortyUpdateBuilder.builder(id).nazwa(DEMO_NAZWA_UPDATED).build());
@@ -135,8 +138,9 @@ public final class AsortyRunner implements EndpointRunner {
 
         // 4. Verify update
         var updated = api.getById(id);
-        LOG.info(LOG_CUD_GET_AFTER_UPDATE, ENDPOINT, id, updated.nazwa());
-        verifyField(ENDPOINT, FIELD_NAZWA, DEMO_NAZWA_UPDATED, updated.nazwa());
+        String updatedNazwa = updated.nazwa();
+        LOG.info(LOG_CUD_GET_AFTER_UPDATE, ENDPOINT, id, updatedNazwa);
+        verifyField(ENDPOINT, FIELD_NAZWA, DEMO_NAZWA_UPDATED, updatedNazwa);
 
         // 5. Delete
         api.deleteById(id);
@@ -158,11 +162,11 @@ public final class AsortyRunner implements EndpointRunner {
     }
 
     private void verifyDeleteBehavior(AsortyClient api, Long id) {
-        var response = api.getById(id);
-        if (response == null) {
-            LOG.info(LOG_CUD_HARD_DELETE, ENDPOINT, id);
-        } else {
+        try {
+            api.getById(id);
             LOG.info(LOG_CUD_SOFT_DELETE, ENDPOINT, id);
+        } catch (NoviCloudNotFoundException expected) {
+            LOG.info(LOG_CUD_HARD_DELETE, ENDPOINT, id);
         }
     }
 

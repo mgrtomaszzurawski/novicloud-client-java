@@ -6,9 +6,11 @@
 /**
  * Immutable SDK model records returned by all NoviCloud client methods.
  *
- * <p>These records wrap the OpenAPI-generated types from
- * {@code io.github.mgrtomaszzurawski.novicloud.client.model} and expose
- * a stable, immutable public API. Link references are unwrapped to plain IDs.
+ * <p>Each record is an SDK-owned data class with field accessors named after
+ * the API field (for example {@code towar.nazwa()}, {@code towar.kod()}). Link
+ * references are unwrapped to plain IDs. Records are constructed by the SDK
+ * internally; consumers receive them and read fields - they do not depend on
+ * any types from the generated transport layer.
  *
  * @since 1.0.0
  */

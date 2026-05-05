@@ -5,8 +5,6 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.model;
 
-import io.github.mgrtomaszzurawski.novicloud.client.model.StanMagRaw;
-
 /**
  * Immutable SDK model for the {@code stanmag} resource.
  *
@@ -23,22 +21,4 @@ public record StanMag(
         String sklepId
 )
 {
-
-    /**
-     * Creates an immutable {@code StanMag} from the generated {@code StanMagRaw}.
-     *
-     * @param raw the generated model instance; must not be {@code null}
-     * @return a new immutable {@code StanMag}
-     */
-    public static StanMag from(StanMagRaw raw) {
-        return new StanMag(
-                raw.getIlosc(),
-                raw.getwCZakNetto(),
-                raw.getwCZakBrutto(),
-                raw.getwCSprzedNetto(),
-                raw.getwCSprzedBrutto(),
-                LinkUtils.extractId(raw.getTowar()),
-                LinkUtils.extractId(raw.getSklep())
-        );
-    }
 }

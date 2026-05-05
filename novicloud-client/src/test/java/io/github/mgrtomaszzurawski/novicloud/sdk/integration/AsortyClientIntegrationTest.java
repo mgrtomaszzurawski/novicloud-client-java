@@ -171,6 +171,19 @@ class AsortyClientIntegrationTest {
     }
 
     @Test
+    void getById_whenServerReturns200WithNullDane_throwsNotFoundException() {
+        // given - hard-delete endpoint may return HTTP 200 with dane=null per ADR-033
+        stubFor(get(urlPathMatching(URL_BY_ID))
+                .willReturn(okJson("{\"status\":200,\"status_opis\":\"Ok\",\"dane\":null}")));
+
+        // when / then
+        var resource = client.asorty();
+        NoviCloudNotFoundException ex = assertThrows(NoviCloudNotFoundException.class,
+                () -> resource.getById(EXPECTED_FIRST_ID));
+        assertEquals(HTTP_OK, ex.getStatusCode());
+    }
+
+    @Test
     void count_whenServerReturns429_throwsRateLimitException() {
         // given
         stubFor(get(urlPathMatching(URL_LIST))

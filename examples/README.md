@@ -6,7 +6,7 @@ Each file is self-contained - read it as reference or copy into your project.
 ## Prerequisites
 
 - Java 17+
-- `novicloud-client-1.0.0.jar` on classpath (or as Maven dependency)
+- `novicloud-client-2.0.0.jar` on classpath (or as Maven dependency)
 - NoviCloud API credentials (account name + password)
 
 ## Running an example
@@ -21,8 +21,8 @@ export NOVICLOUD_PASSWORD=your-password
 Then compile and run:
 
 ```bash
-javac -cp novicloud-client-1.0.0.jar ListProducts.java
-java -cp novicloud-client-1.0.0.jar:. ListProducts
+javac -cp novicloud-client-2.0.0.jar ListProducts.java
+java -cp novicloud-client-2.0.0.jar:. ListProducts
 ```
 
 Or just read the source - each file is under 40 lines.

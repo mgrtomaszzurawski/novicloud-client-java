@@ -5,6 +5,8 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.resources.asorty;
 
+import java.util.Objects;
+
 /**
  * Immutable data transfer object for creating a new asorty record. Required: {@code nazwa}.
  *
@@ -59,7 +61,9 @@ public final class AsortyCreateBuilder {
         private String nazwa;
         private String parentId;
 
-        private Builder(String nazwa) { this.nazwa = nazwa; }
+        private Builder(String nazwa) {
+            this.nazwa = Objects.requireNonNull(nazwa, "nazwa must not be null");
+        }
 
         /** Sets Record ID. @return this builder */
         public Builder id(Long id) { this.id = id; return this; }

@@ -5,6 +5,8 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.resources.formyplatn;
 
+import java.util.Objects;
+
 /**
  * Immutable data transfer object for creating a new formaplatn record. Required: {@code nazwa}, {@code typ}.
  *
@@ -65,7 +67,10 @@ public final class FormaPlatnCreateBuilder {
         private Integer typ;
         private Boolean reszta;
 
-        private Builder(String nazwa, Integer typ) { this.nazwa = nazwa; this.typ = typ; }
+        private Builder(String nazwa, Integer typ) {
+            this.nazwa = Objects.requireNonNull(nazwa, "nazwa must not be null");
+            this.typ = Objects.requireNonNull(typ, "typ must not be null");
+        }
 
         /** Sets Record ID. @return this builder */
         public Builder id(Long id) { this.id = id; return this; }

@@ -131,6 +131,8 @@ TowarCenaWSklepie:
   type: object
   description: Store-specific pricing details.
   properties:
+    sklep:
+      $ref: './common.yaml#/Link'
     cena_ew:
       type: number
       format: double

@@ -48,7 +48,11 @@ kontrahentCollection:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   post:
     summary: Create counterparty
@@ -74,7 +78,11 @@ kontrahentCollection:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   put:
     summary: Update counterparty (id in body)
@@ -100,7 +108,11 @@ kontrahentCollection:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
 
 kontrahentById:
@@ -125,7 +137,11 @@ kontrahentById:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   put:
     summary: Update counterparty by id
@@ -151,7 +167,11 @@ kontrahentById:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   delete:
     summary: Delete counterparty by id
@@ -171,5 +191,9 @@ kontrahentById:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'

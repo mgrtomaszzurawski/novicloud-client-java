@@ -131,8 +131,12 @@ public final class FormyPlatnRunner implements EndpointRunner, CreatesTestRecord
         }
         long id = Long.parseLong(savedId);
         var fetched = api.getById(id);
-        LOG.info(LOG_UD_GET, ENDPOINT, id, fetched.nazwa(), fetched.typ(), fetched.reszta(), fetched.aktywny());
-        if (fetched.aktywny() != null && !fetched.aktywny()) {
+        String fetchedNazwa = fetched.nazwa();
+        var fetchedTyp = fetched.typ();
+        Boolean fetchedReszta = fetched.reszta();
+        Boolean fetchedAktywny = fetched.aktywny();
+        LOG.info(LOG_UD_GET, ENDPOINT, id, fetchedNazwa, fetchedTyp, fetchedReszta, fetchedAktywny);
+        if (fetchedAktywny != null && !fetchedAktywny) {
             api.update(FormaPlatnUpdateBuilder.builder(id).aktywny(true).build());
             LOG.info(LOG_UD_REACTIVATED, ENDPOINT, id);
         }

@@ -5,8 +5,6 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.model;
 
-import io.github.mgrtomaszzurawski.novicloud.client.model.KontrahentRaw;
-
 /**
  * Immutable SDK model for the {@code kontrahent} resource.
  *
@@ -39,38 +37,4 @@ public record Kontrahent(
         String krajId
 )
 {
-
-    /**
-     * Creates an immutable {@code Kontrahent} from the generated {@code KontrahentRaw}.
-     *
-     * @param raw the generated model instance; must not be {@code null}
-     * @return a new immutable {@code Kontrahent}
-     */
-    public static Kontrahent from(KontrahentRaw raw) {
-        return new Kontrahent(
-                raw.getId(),
-                raw.getNazwa(),
-                raw.getNip(),
-                raw.getSkrot(),
-                raw.getUlica(),
-                raw.getNrDomu(),
-                raw.getNrLokalu(),
-                raw.getUlicaINumer(),
-                raw.getKodPoczt(),
-                raw.getPoczta(),
-                raw.getMiasto(),
-                raw.getGmina(),
-                raw.getPowiat(),
-                raw.getWojewodztwo(),
-                raw.getTelefon(),
-                raw.getEmail(),
-                raw.getAktywny(),
-                raw.getDostawca(),
-                raw.getStaly(),
-                raw.getProducent(),
-                raw.getOdbiorca(),
-                raw.getOsoba(),
-                LinkUtils.extractId(raw.getKraj())
-        );
-    }
 }

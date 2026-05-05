@@ -5,7 +5,6 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.model;
 
-import io.github.mgrtomaszzurawski.novicloud.client.model.KasaRaw;
 import java.time.LocalDateTime;
 
 /**
@@ -24,22 +23,4 @@ public record Kasa(
         Boolean aktywny
 )
 {
-
-    /**
-     * Creates an immutable {@code Kasa} from the generated {@code KasaRaw}.
-     *
-     * @param raw the generated model instance; must not be {@code null}
-     * @return a new immutable {@code Kasa}
-     */
-    public static Kasa from(KasaRaw raw) {
-        return new Kasa(
-                raw.getId(),
-                raw.getNazwa(),
-                raw.getNumer(),
-                raw.getEcr(),
-                raw.getOstatniaSync(),
-                raw.getOstatniaSprzed(),
-                raw.getAktywny()
-        );
-    }
 }

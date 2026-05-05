@@ -11,6 +11,7 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseKartyLojLis
 import io.github.mgrtomaszzurawski.novicloud.client.model.KartaLojalnosciowaRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.kartyloj.KartyLojClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.kartyloj.KartyLojClientImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
@@ -26,7 +27,7 @@ import static io.github.mgrtomaszzurawski.novicloud.sdk.TestConstants.*;
 class KartyLojClientTest {
 
     private KartyLojClient client() {
-        return new KartyLojClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+        return new KartyLojClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
     }
 
     @Test
@@ -56,7 +57,7 @@ class KartyLojClientTest {
         // when
         try (MockedConstruction<KartyLojApi> mc = mockConstructionWithAnswer(KartyLojApi.class,
                 inv -> response)) {
-            int result = new KartyLojClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new KartyLojClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_LIST_COUNT, result);
@@ -72,7 +73,7 @@ class KartyLojClientTest {
         // when
         try (MockedConstruction<KartyLojApi> mc = mockConstructionWithAnswer(KartyLojApi.class,
                 inv -> response)) {
-            int result = new KartyLojClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new KartyLojClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(EXPECTED_ZERO, result);
@@ -89,7 +90,7 @@ class KartyLojClientTest {
         // when
         try (MockedConstruction<KartyLojApi> mc = mockConstructionWithAnswer(KartyLojApi.class,
                 inv -> response)) {
-            int result = new KartyLojClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new KartyLojClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_REPORTED_SIZE, result);
@@ -102,7 +103,7 @@ class KartyLojClientTest {
         // given
         try (MockedConstruction<KartyLojApi> mc = mockConstructionWithAnswer(KartyLojApi.class,
                 inv -> { throw apiServerError(); })) {
-            var client = new KartyLojClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+            var client = new KartyLojClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
 
             // when / then
             assertThrows(NoviCloudException.class, () -> client.count(null));

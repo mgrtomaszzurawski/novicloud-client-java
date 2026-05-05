@@ -63,6 +63,9 @@ context/
 ### Demo-app generated IDs ###
 demo-soft-delete-ids.properties
 
+### JPMS consumer-side encapsulation check (not part of build) ###
+jpms-consumer-check/
+
 ### Secrets ###
 .env
 *.gpg

@@ -11,6 +11,7 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseKrajeListRa
 import io.github.mgrtomaszzurawski.novicloud.client.model.KrajRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.kraje.KrajeClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.kraje.KrajeClientImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
@@ -26,7 +27,7 @@ import static io.github.mgrtomaszzurawski.novicloud.sdk.TestConstants.*;
 class KrajeClientTest {
 
     private KrajeClient client() {
-        return new KrajeClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+        return new KrajeClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
     }
 
     @Test
@@ -65,7 +66,7 @@ class KrajeClientTest {
         // when
         try (MockedConstruction<KrajeApi> mc = mockConstructionWithAnswer(KrajeApi.class,
                 inv -> response)) {
-            int result = new KrajeClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new KrajeClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_LIST_COUNT, result);
@@ -81,7 +82,7 @@ class KrajeClientTest {
         // when
         try (MockedConstruction<KrajeApi> mc = mockConstructionWithAnswer(KrajeApi.class,
                 inv -> response)) {
-            int result = new KrajeClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new KrajeClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(EXPECTED_ZERO, result);
@@ -98,7 +99,7 @@ class KrajeClientTest {
         // when
         try (MockedConstruction<KrajeApi> mc = mockConstructionWithAnswer(KrajeApi.class,
                 inv -> response)) {
-            int result = new KrajeClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new KrajeClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_REPORTED_SIZE, result);
@@ -111,7 +112,7 @@ class KrajeClientTest {
         // given
         try (MockedConstruction<KrajeApi> mc = mockConstructionWithAnswer(KrajeApi.class,
                 inv -> { throw apiServerError(); })) {
-            var client = new KrajeClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+            var client = new KrajeClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
 
             // when / then
             assertThrows(NoviCloudException.class, () -> client.count(null));

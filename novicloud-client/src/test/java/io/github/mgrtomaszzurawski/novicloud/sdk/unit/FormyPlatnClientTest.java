@@ -11,6 +11,7 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseFormyPlatnL
 import io.github.mgrtomaszzurawski.novicloud.client.model.FormaPlatnRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.formyplatn.FormyPlatnClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.formyplatn.FormyPlatnClientImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
@@ -26,7 +27,7 @@ import static io.github.mgrtomaszzurawski.novicloud.sdk.TestConstants.*;
 class FormyPlatnClientTest {
 
     private FormyPlatnClient client() {
-        return new FormyPlatnClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+        return new FormyPlatnClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
     }
 
     @Test
@@ -65,7 +66,7 @@ class FormyPlatnClientTest {
         // when
         try (MockedConstruction<FormyPlatnApi> mc = mockConstructionWithAnswer(FormyPlatnApi.class,
                 inv -> response)) {
-            int result = new FormyPlatnClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new FormyPlatnClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_LIST_COUNT, result);
@@ -81,7 +82,7 @@ class FormyPlatnClientTest {
         // when
         try (MockedConstruction<FormyPlatnApi> mc = mockConstructionWithAnswer(FormyPlatnApi.class,
                 inv -> response)) {
-            int result = new FormyPlatnClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new FormyPlatnClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(EXPECTED_ZERO, result);
@@ -98,7 +99,7 @@ class FormyPlatnClientTest {
         // when
         try (MockedConstruction<FormyPlatnApi> mc = mockConstructionWithAnswer(FormyPlatnApi.class,
                 inv -> response)) {
-            int result = new FormyPlatnClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new FormyPlatnClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_REPORTED_SIZE, result);
@@ -111,7 +112,7 @@ class FormyPlatnClientTest {
         // given
         try (MockedConstruction<FormyPlatnApi> mc = mockConstructionWithAnswer(FormyPlatnApi.class,
                 inv -> { throw apiServerError(); })) {
-            var client = new FormyPlatnClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+            var client = new FormyPlatnClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
 
             // when / then
             assertThrows(NoviCloudException.class, () -> client.count(null));

@@ -5,9 +5,9 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.model;
 
-import io.github.mgrtomaszzurawski.novicloud.client.model.DokumentRaw;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Immutable SDK model for the {@code dokument} resource.
@@ -43,46 +43,37 @@ public record Dokument(
         String kasjerId,
         String formaPlatnId,
         String dotyczyId,
-        String pozycjeLink
+        String pozycjeLink,
+        String pozycjeId,
+        String pozycjeUrl,
+        List<DokumentRozbicieVat> rozbicieVat,
+        List<Platnosc> platnosci,
+        List<String> korektyIds,
+        List<String> fakturyIds,
+        List<String> dokMagazynoweIds,
+        List<String> paragonyIds,
+        List<DokumentRozliczany> dokRozliczane
 )
 {
 
     /**
-     * Creates an immutable {@code Dokument} from the generated {@code DokumentRaw}.
+     * Resource ID of the line-items endpoint for this document.
      *
-     * @param raw the generated model instance; must not be {@code null}
-     * @return a new immutable {@code Dokument}
+     * <p>Despite the name, this is the {@code id} extracted from the {@code pozycje}
+     * link object, not the URL. Prefer {@link #pozycjeId()} for clarity, or
+     * {@link #pozycjeUrl()} if you actually need the absolute URL.
+     *
+     * @return the line-items resource ID; {@code null} if absent
+     * @deprecated since 2.0.0 - misleading name. Use {@link #pozycjeId()} or
+     *     {@link #pozycjeUrl()}. Scheduled for removal in 3.0.
      */
-    public static Dokument from(DokumentRaw raw) {
-        return new Dokument(
-                raw.getId(),
-                raw.getTypDok(),
-                raw.getDataWystawienia(),
-                raw.getDataWplywu(),
-                raw.getDataWykonania(),
-                raw.getNrDok(),
-                raw.getKartaRabatowa(),
-                raw.getNipNaPar(),
-                raw.getNrSystemowy(),
-                raw.getNrFiskalny(),
-                raw.getNrRapDobowego(),
-                raw.getKomentarz(),
-                raw.getStorno(),
-                raw.getNetto(),
-                raw.getPodatek(),
-                raw.getBrutto(),
-                raw.getRabat(),
-                raw.getTerminPlatn(),
-                raw.getZaplacono(),
-                LinkUtils.extractId(raw.getSklep()),
-                LinkUtils.extractId(raw.getSklepOdb()),
-                LinkUtils.extractId(raw.getKontrahent()),
-                LinkUtils.extractId(raw.getPlatnik()),
-                LinkUtils.extractId(raw.getKasa()),
-                LinkUtils.extractId(raw.getKasjer()),
-                LinkUtils.extractId(raw.getFormaPlatn()),
-                LinkUtils.extractId(raw.getDotyczy()),
-                LinkUtils.extractId(raw.getPozycje())
-        );
+    @Deprecated(since = "2.0.0", forRemoval = true)
+    @Override
+    @SuppressWarnings({
+        "java:S6207", // Override is the only way to attach @Deprecated to a record component accessor.
+        "java:S1133"  // Deprecation kept through 2.x as a deliberate migration window for 1.0 callers.
+    })
+    public String pozycjeLink() {
+        return pozycjeLink;
     }
 }

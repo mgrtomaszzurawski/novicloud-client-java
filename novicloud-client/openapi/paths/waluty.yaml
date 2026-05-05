@@ -35,7 +35,11 @@ walutaCollection:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   post:
     summary: Create currency
@@ -61,7 +65,11 @@ walutaCollection:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   put:
     summary: Update currency (id in body)
@@ -87,7 +95,11 @@ walutaCollection:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
 
 walutaById:
@@ -112,7 +124,11 @@ walutaById:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   put:
     summary: Update currency by id
@@ -138,7 +154,11 @@ walutaById:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   delete:
     summary: Delete currency by id
@@ -158,5 +178,9 @@ walutaById:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'

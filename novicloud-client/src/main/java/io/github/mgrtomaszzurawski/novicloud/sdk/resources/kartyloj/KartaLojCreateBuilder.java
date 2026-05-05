@@ -5,6 +5,8 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.resources.kartyloj;
 
+import java.util.Objects;
+
 /**
  * Immutable data transfer object for creating a new kartaloj record. Required: {@code kod}.
  *
@@ -167,7 +169,9 @@ public final class KartaLojCreateBuilder {
         private String dataUrodzenia;
         private String plec;
 
-        private Builder(String kod) { this.kod = kod; }
+        private Builder(String kod) {
+            this.kod = Objects.requireNonNull(kod, "kod must not be null");
+        }
 
         /** Sets Record type code (typ). @return this builder */
         public Builder typ(Integer typ) { this.typ = typ; return this; }
@@ -215,6 +219,25 @@ public final class KartaLojCreateBuilder {
          *
          * @return a new {@link KartaLojCreateBuilder} instance
          */
-        public KartaLojCreateBuilder build() { return new KartaLojCreateBuilder(this); }
+        /**
+         * Builds the {@link KartaLojCreateBuilder}.
+         *
+         * <p>Validates the conditional NoviCloud server requirements: at least one of
+         * {@code telefon} or {@code email} must be set, and {@code nazwiskoImie} must
+         * be set (per ADR-033 and the official API documentation). Skipping these
+         * checks produces a server-side HTTP 400 with a generic message.
+         *
+         * @return a new {@link KartaLojCreateBuilder} instance
+         * @throws IllegalStateException if conditional required fields are missing
+         */
+        public KartaLojCreateBuilder build() {
+            if (telefon == null && email == null) {
+                throw new IllegalStateException("at least one of telefon or email must be set");
+            }
+            if (nazwiskoImie == null) {
+                throw new IllegalStateException("nazwiskoImie must not be null");
+            }
+            return new KartaLojCreateBuilder(this);
+        }
     }
 }

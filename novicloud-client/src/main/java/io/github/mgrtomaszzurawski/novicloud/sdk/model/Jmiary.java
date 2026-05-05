@@ -5,8 +5,6 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.model;
 
-import io.github.mgrtomaszzurawski.novicloud.client.model.JmiaryRaw;
-
 /**
  * Immutable SDK model for the {@code jmiary} resource.
  *
@@ -36,19 +34,5 @@ public record Jmiary(Long id, String nazwa, Precyzja precyzja) {
             }
             return null;
         }
-    }
-
-    /**
-     * Creates an immutable {@code Jmiary} from the generated {@code JmiaryRaw}.
-     *
-     * @param raw the generated model instance; must not be {@code null}
-     * @return a new immutable {@code Jmiary}
-     */
-    public static Jmiary from(JmiaryRaw raw) {
-        return new Jmiary(
-                raw.getId(),
-                raw.getNazwa(),
-                raw.getPrecyzja() != null ? Precyzja.fromCode(raw.getPrecyzja().getValue()) : null
-        );
     }
 }

@@ -11,6 +11,7 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseKontrahenci
 import io.github.mgrtomaszzurawski.novicloud.client.model.KontrahentRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.kontrahenci.KontrahenciClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.kontrahenci.KontrahenciClientImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
@@ -26,7 +27,7 @@ import static io.github.mgrtomaszzurawski.novicloud.sdk.TestConstants.*;
 class KontrahenciClientTest {
 
     private KontrahenciClient client() {
-        return new KontrahenciClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+        return new KontrahenciClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
     }
 
     @Test
@@ -65,7 +66,7 @@ class KontrahenciClientTest {
         // when
         try (MockedConstruction<KontrahenciApi> mc = mockConstructionWithAnswer(KontrahenciApi.class,
                 inv -> response)) {
-            int result = new KontrahenciClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new KontrahenciClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_LIST_COUNT, result);
@@ -81,7 +82,7 @@ class KontrahenciClientTest {
         // when
         try (MockedConstruction<KontrahenciApi> mc = mockConstructionWithAnswer(KontrahenciApi.class,
                 inv -> response)) {
-            int result = new KontrahenciClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new KontrahenciClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(EXPECTED_ZERO, result);
@@ -98,7 +99,7 @@ class KontrahenciClientTest {
         // when
         try (MockedConstruction<KontrahenciApi> mc = mockConstructionWithAnswer(KontrahenciApi.class,
                 inv -> response)) {
-            int result = new KontrahenciClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new KontrahenciClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_REPORTED_SIZE, result);
@@ -111,7 +112,7 @@ class KontrahenciClientTest {
         // given
         try (MockedConstruction<KontrahenciApi> mc = mockConstructionWithAnswer(KontrahenciApi.class,
                 inv -> { throw apiServerError(); })) {
-            var client = new KontrahenciClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+            var client = new KontrahenciClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
 
             // when / then
             assertThrows(NoviCloudException.class, () -> client.count(null));

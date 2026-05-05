@@ -91,9 +91,25 @@ public final class RetryPolicy {
     public long maxRetryAfterSeconds() { return maxRetryAfterSeconds; }
 
     /**
-     * Whether POST (create) operations are retried on 5xx errors.
-     * Default: {@code true}. The NoviCloud API enforces uniqueness on required fields,
-     * so a duplicate is not created if a retry follows a committed-but-lost response.
+     * Whether POST (create) operations are retried on transient failures.
+     *
+     * <p><strong>Default: {@code false}</strong> (since 2.0.0).
+     *
+     * <p>Covers BOTH HTTP 429 (rate limit) and HTTP 5xx for POST. With the
+     * default the SDK is at-most-once for POST; the producer's response is the
+     * only outcome the caller observes. Setting this to {@code true} re-enables
+     * retry for both classes.
+     *
+     * <p>POST is not idempotent on the NoviCloud REST API: the producer documentation
+     * does not guarantee an idempotency-key contract or a global uniqueness guarantee
+     * that would make automatic POST retry safe. A POST committed by the server but
+     * for which the response was lost - or a server-side 5xx that arrives after the
+     * record was already created, or a 429 returned after the create has already
+     * begun - can produce duplicate records on retry.
+     *
+     * <p>Opt in only if the resource you are creating has a unique key whose violation
+     * the server reliably surfaces as 4xx (for example, sklep.numer or kod for kartyloj),
+     * and you have considered duplicate handling at your call site.
      */
     public boolean retryPost() { return retryPost; }
 
@@ -113,7 +129,7 @@ public final class RetryPolicy {
         private BackoffStrategy backoffStrategy = BackoffStrategy.EXPONENTIAL;
         private boolean retryOn429 = true;
         private long maxRetryAfterSeconds = DEFAULT_MAX_RETRY_AFTER_SECONDS;
-        private boolean retryPost = true;
+        private boolean retryPost;
 
         private Builder() {
         }
@@ -158,8 +174,20 @@ public final class RetryPolicy {
         }
 
         /**
-         * Set {@code false} to prevent retrying POST (create) operations on 5xx.
-         * Use this if you need strict "at-most-once" POST semantics despite transient server errors.
+         * Whether to retry POST (create) operations on transient failures.
+         *
+         * <p>Default since 2.0.0: {@code false} ("at-most-once" POST semantics).
+         * Applies to BOTH HTTP 429 (rate limit) and HTTP 5xx. NoviCloud's REST API
+         * does not document idempotency guarantees for POST, so retrying a
+         * committed-but-lost response - whether it surfaced as 429 or 5xx -
+         * can produce duplicate records.
+         *
+         * <p>Set {@code true} only when the resource has a server-enforced unique
+         * key (e.g. {@code kartyloj.kod}) whose violation surfaces as 4xx, and
+         * your call site is prepared to handle the conflict.
+         *
+         * @param retryPost whether to retry POST on 429 and 5xx
+         * @return this builder
          */
         public Builder retryPost(boolean retryPost) { this.retryPost = retryPost; return this; }
 
