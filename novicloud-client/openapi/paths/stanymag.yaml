@@ -31,7 +31,11 @@ stanMagCollection:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   put:
     summary: Update stock level (towar.id and sklep.id in body)
@@ -57,7 +61,11 @@ stanMagCollection:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
 
 stanMagByTowar:
@@ -84,7 +92,11 @@ stanMagByTowar:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   put:
     summary: Update stock level for a specific product (sklep.id in body)
@@ -110,7 +122,11 @@ stanMagByTowar:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
 
 stanMagByTowarAndSklep:
@@ -138,7 +154,11 @@ stanMagByTowarAndSklep:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
   put:
     summary: Update stock level for a specific product-shop pair
@@ -164,5 +184,9 @@ stanMagByTowarAndSklep:
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '402':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '410':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
       '500':
+        $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'
+      '501':
         $ref: '../components/schemas/envelopes.yaml#/ApiResponseError'

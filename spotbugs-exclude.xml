@@ -36,4 +36,16 @@
         <Package name="io.github.mgrtomaszzurawski.novicloud.demo.runner"/>
         <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
     </Match>
+
+    <!--
+        SDK records expose List<T> components (Towar.kodyDod, Dokument.platnosci, etc.,
+        added in 1.1.0 / ADR-054). The factory methods build the lists with List.of()
+        or stream().toList(), both of which return unmodifiable lists, so the accessors
+        return effectively-immutable views. SpotBugs cannot see this through the record
+        component generation and reports EI_EXPOSE_REP / EI_EXPOSE_REP2 false positives.
+    -->
+    <Match>
+        <Package name="io.github.mgrtomaszzurawski.novicloud.sdk.model"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
 </FindBugsFilter>

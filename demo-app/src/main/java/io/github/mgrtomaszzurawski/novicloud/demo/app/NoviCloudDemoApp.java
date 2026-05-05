@@ -85,38 +85,41 @@ public final class NoviCloudDemoApp {
         }
 
         SoftDeleteIds ids = loadIds(mode);
-        NoviCloudClient client = buildClient(credentials, baseUrl);
+        boolean failed;
+        try (NoviCloudClient client = buildClient(credentials, baseUrl)) {
+            List<EndpointRunner> runners = List.of(
+                    new AsortyRunner(mode),
+                    new JmiaryRunner(mode),
+                    new StawkiVatRunner(mode),
+                    new KrajeRunner(mode),
+                    new DokumentyRunner(mode),
+                    new PozdokRunner(mode),
+                    new SprzedazRunner(mode),
+                    new RapSprzedRunner(mode),
+                    new RapPracyRunner(mode),
+                    new TowaryRunner(mode, ids),
+                    new WalutyRunner(mode, ids),
+                    new KontrahenciRunner(mode, ids),
+                    new SklepyRunner(mode, ids),
+                    new FormyPlatnRunner(mode, ids),
+                    new KasyRunner(mode),
+                    new KasjerzyRunner(mode),
+                    new KartyLojRunner(mode, ids),
+                    new StanyMagRunner(mode)
+            );
 
-        List<EndpointRunner> runners = List.of(
-                new AsortyRunner(mode),
-                new JmiaryRunner(mode),
-                new StawkiVatRunner(mode),
-                new KrajeRunner(mode),
-                new DokumentyRunner(mode),
-                new PozdokRunner(mode),
-                new SprzedazRunner(mode),
-                new RapSprzedRunner(mode),
-                new RapPracyRunner(mode),
-                new TowaryRunner(mode, ids),
-                new WalutyRunner(mode, ids),
-                new KontrahenciRunner(mode, ids),
-                new SklepyRunner(mode, ids),
-                new FormyPlatnRunner(mode, ids),
-                new KasyRunner(mode),
-                new KasjerzyRunner(mode),
-                new KartyLojRunner(mode, ids),
-                new StanyMagRunner(mode)
-        );
+            RunReport report = new DemoSession(client).runAll(runners);
 
-        RunReport report = new DemoSession(client).runAll(runners);
+            report.print();
 
-        report.print();
+            if (mode == DemoMode.CREATE_SOFT) {
+                collectAndSaveIds(runners);
+            }
 
-        if (mode == DemoMode.CREATE_SOFT) {
-            collectAndSaveIds(runners);
+            failed = report.hasFailures();
         }
 
-        if (report.hasFailures()) {
+        if (failed) {
             System.exit(EXIT_FAILURE);
         }
     }

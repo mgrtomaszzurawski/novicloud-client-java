@@ -5,8 +5,6 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.model;
 
-import io.github.mgrtomaszzurawski.novicloud.client.model.PozycjaDokumentuRaw;
-
 /**
  * Immutable SDK model for the {@code pozycjadokumentu} resource.
  *
@@ -44,43 +42,4 @@ public record PozycjaDokumentu(
         String towarId
 )
 {
-
-    /**
-     * Creates an immutable {@code PozycjaDokumentu} from the generated {@code PozycjaDokumentuRaw}.
-     *
-     * @param raw the generated model instance; must not be {@code null}
-     * @return a new immutable {@code PozycjaDokumentu}
-     */
-    public static PozycjaDokumentu from(PozycjaDokumentuRaw raw) {
-        return new PozycjaDokumentu(
-                raw.getId(),
-                raw.getNrPozycji(),
-                raw.getIlosc(),
-                raw.getIloscPocz(),
-                raw.getStawkaVat(),
-                raw.getcPrzedRabNetto(),
-                raw.getcPrzedRabBrutto(),
-                raw.getcPoRabNetto(),
-                raw.getcPoRabBrutto(),
-                raw.getRabatKwota(),
-                raw.getwNetto(),
-                raw.getwPodatek(),
-                raw.getwBrutto(),
-                raw.getOrgIlosc(),
-                raw.getOrgCPrzedRabNetto(),
-                raw.getOrgCPrzedRabBrutto(),
-                raw.getOrgCPoRabNetto(),
-                raw.getOrgCPoRabBrutto(),
-                raw.getOrgRabatKwota(),
-                raw.getOrgWNetto(),
-                raw.getOrgWPodatek(),
-                raw.getOrgWBrutto(),
-                raw.getRozlNetto(),
-                raw.getRozlPodatek(),
-                raw.getRozlBrutto(),
-                raw.getStorno(),
-                LinkUtils.extractId(raw.getDokument()),
-                LinkUtils.extractId(raw.getTowar())
-        );
-    }
 }

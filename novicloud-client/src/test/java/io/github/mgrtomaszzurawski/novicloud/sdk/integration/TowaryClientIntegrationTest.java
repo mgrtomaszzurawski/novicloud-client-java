@@ -12,6 +12,7 @@ import io.github.mgrtomaszzurawski.novicloud.sdk.model.Towar;
 import io.github.mgrtomaszzurawski.novicloud.sdk.NoviCloudClient;
 import io.github.mgrtomaszzurawski.novicloud.sdk.paging.PagedResult;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudAuthException;
+import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudNotFoundException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudRateLimitException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudServerException;
@@ -51,6 +52,14 @@ class TowaryClientIntegrationTest {
     private static final double EXPECTED_CENA_DOD = 129.9;
     private static final String EXPECTED_GTU = "GTU_01";
     private static final double EXPECTED_MASA_WL = 0.5;
+    private static final int EXPECTED_KODY_DOD_COUNT = 2;
+    private static final String EXPECTED_KOD_DOD_FIRST = "5901234567891";
+    private static final int EXPECTED_CENY_W_SKLEPACH_COUNT = 2;
+    private static final String EXPECTED_CENA_SKLEP_1_ID = "1";
+    private static final double EXPECTED_CENA_SKLEP_1_DET = 17.5;
+    private static final int EXPECTED_SKLADNIKI_COUNT = 1;
+    private static final String EXPECTED_SKLADNIK_NAZWA = "Main";
+    private static final String EXPECTED_SKLADNIK_TOWAR_ID = "100";
 
     // -- create / update test data --
     private static final String CREATE_KOD = "1234567890";
@@ -134,7 +143,7 @@ class TowaryClientIntegrationTest {
     }
 
     @Test
-    void getById_whenRecordExists_deserializesAllFields() {
+    void getById_whenRecordExists_deserializesScalarFields() {
         // given
         stubFor(get(urlPathMatching(URL_BY_ID))
                 .willReturn(TestClients.jsonFile(SINGLE_FILE)));
@@ -163,6 +172,26 @@ class TowaryClientIntegrationTest {
         assertNotNull(t.jmId());
         assertNotNull(t.asortId());
         assertNotNull(t.ostZmiana());
+    }
+
+    @Test
+    void getById_whenRecordExists_deserializesNestedFields() {
+        // given - F-12: Towar nested records (kody_dod, ceny_w_sklepach, skladniki)
+        stubFor(get(urlPathMatching(URL_BY_ID))
+                .willReturn(TestClients.jsonFile(SINGLE_FILE)));
+
+        // when
+        Towar t = client.towary().getById(EXPECTED_ALPHA_ID);
+
+        // then
+        assertEquals(EXPECTED_KODY_DOD_COUNT, t.kodyDod().size());
+        assertEquals(EXPECTED_KOD_DOD_FIRST, t.kodyDod().get(FIRST_INDEX).kod());
+        assertEquals(EXPECTED_CENY_W_SKLEPACH_COUNT, t.cenyWSklepach().size());
+        assertEquals(EXPECTED_CENA_SKLEP_1_ID, t.cenyWSklepach().get(FIRST_INDEX).sklepId());
+        assertEquals(EXPECTED_CENA_SKLEP_1_DET, t.cenyWSklepach().get(FIRST_INDEX).cenaDet());
+        assertEquals(EXPECTED_SKLADNIKI_COUNT, t.skladniki().size());
+        assertEquals(EXPECTED_SKLADNIK_NAZWA, t.skladniki().get(FIRST_INDEX).nazwa());
+        assertEquals(EXPECTED_SKLADNIK_TOWAR_ID, t.skladniki().get(FIRST_INDEX).towary().get(FIRST_INDEX).towarId());
     }
 
     @Test
@@ -229,6 +258,50 @@ class TowaryClientIntegrationTest {
         NoviCloudAuthException ex = assertThrows(NoviCloudAuthException.class,
                 () -> resource.count(null));
         assertEquals(HTTP_UNAUTHORIZED, ex.getStatusCode());
+    }
+
+    @Test
+    void count_whenServerReturns402_throwsAccessException() {
+        // given - F-04: REST API option not subscribed
+        stubFor(get(urlPathMatching(URL_LIST))
+                .willReturn(aResponse().withStatus(HTTP_PAYMENT_REQUIRED)));
+
+        // when / then
+        var resource = client.towary();
+        var ex = assertThrows(io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudAccessException.class,
+                () -> resource.count(null));
+        assertEquals(HTTP_PAYMENT_REQUIRED, ex.getStatusCode());
+    }
+
+    @Test
+    void count_whenConnectionFails_throwsNetworkException() {
+        // given - F-02: WireMock fault simulates IOException at the socket level
+        stubFor(get(urlPathMatching(URL_LIST))
+                .willReturn(aResponse().withFault(com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER)));
+
+        // when / then
+        var resource = client.towary();
+        var ex = assertThrows(io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudNetworkException.class,
+                () -> resource.count(null));
+        assertNotNull(ex.getCause());
+    }
+
+    @Test
+    void getById_whenServerReturnsUnknownEnumValue_returnsRecordWithNullEnum() {
+        // given - F-03: producer-introduced enum value (typ=99) must not break deserialization
+        String json = "{\"status\":200,\"status_opis\":\"Ok\",\"dane\":{"
+                + "\"id\":2,\"kod\":\"X\",\"nazwa\":\"Y\",\"typ\":99,\"przy_sprzedazy\":42"
+                + "}}";
+        stubFor(get(urlPathMatching(URL_BY_ID))
+                .willReturn(okJson(json)));
+
+        // when
+        Towar t = client.towary().getById(EXPECTED_ALPHA_ID);
+
+        // then
+        assertNotNull(t);
+        assertNull(t.typ(), "unknown typ enum value should map to null, not throw");
+        assertNull(t.przySprzedazy(), "unknown przySprzedazy enum value should map to null, not throw");
     }
 
     @Test
@@ -392,6 +465,53 @@ class TowaryClientIntegrationTest {
     // -----------------------------------------------------------------------
     // Pagination (F-07)
     // -----------------------------------------------------------------------
+
+    @Test
+    void list_whenSecondPageReturnsError_preservesErrorBody(WireMockRuntimeInfo wm) {
+        // given - CF-04: page-2+ HTTP errors (via LinkFetcher) must preserve the
+        // diagnostic body, matching the page-1 generated-call behaviour.
+        int port = wm.getHttpPort();
+        String page1 = """
+                {
+                  "status": 200, "status_opis": "Ok",
+                  "size": 99, "start": 0, "on_page": 1,
+                  "links": {
+                    "self": "http://localhost:%d/demo/towary?start=0",
+                    "next": "http://localhost:%d/demo/towary?start=1"
+                  },
+                  "dane": [
+                    {"id": 1, "kod": "CODE1", "nazwa": "Product 1"}
+                  ]
+                }""".formatted(port, port);
+        String errorBody = "{\"status\":400,\"status_opis\":\"Bad request\","
+                + "\"dane\":{\"par_niewlasciwe\":[\"unknown_filter\"],\"par_bledna_wart\":[\"start\"]}}";
+
+        stubFor(get(urlPathMatching(URL_LIST))
+                .inScenario(SCENARIO_PAGINATION)
+                .whenScenarioStateIs(Scenario.STARTED)
+                .willReturn(okJson(page1))
+                .willSetStateTo(SCENARIO_STATE_PAGE2));
+        stubFor(get(urlPathMatching(URL_LIST))
+                .inScenario(SCENARIO_PAGINATION)
+                .whenScenarioStateIs(SCENARIO_STATE_PAGE2)
+                .willReturn(aResponse()
+                        .withStatus(HTTP_BAD_REQUEST)
+                        .withHeader(CONTENT_TYPE_HEADER, APPLICATION_JSON)
+                        .withBody(errorBody)));
+
+        // when - first page is fine; iterating into page 2 throws with body preserved
+        var resource = client.towary();
+        var result = resource.list(null);
+        var ex = assertThrows(NoviCloudException.class, () -> {
+            for (Towar ignored : result) { /* triggers page 2 fetch */ }
+        });
+
+        // then
+        assertNotNull(ex.getResponseBody(), "LinkFetcher must preserve the error response body");
+        assertTrue(ex.getResponseBody().contains("par_niewlasciwe"));
+        assertTrue(ex.getErrorDetails().isPresent());
+        assertEquals(java.util.List.of("unknown_filter"), ex.getErrorDetails().get().parNiewlasciwe());
+    }
 
     @Test
     void list_whenMultiplePages_iteratesAllPages(WireMockRuntimeInfo wm) {

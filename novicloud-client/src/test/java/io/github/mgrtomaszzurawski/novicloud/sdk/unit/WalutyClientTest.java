@@ -11,6 +11,7 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseWalutyListR
 import io.github.mgrtomaszzurawski.novicloud.client.model.WalutaRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.waluty.WalutyClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.waluty.WalutyClientImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
@@ -26,7 +27,7 @@ import static io.github.mgrtomaszzurawski.novicloud.sdk.TestConstants.*;
 class WalutyClientTest {
 
     private WalutyClient client() {
-        return new WalutyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+        return new WalutyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
     }
 
     @Test
@@ -65,7 +66,7 @@ class WalutyClientTest {
         // when
         try (MockedConstruction<WalutyApi> mc = mockConstructionWithAnswer(WalutyApi.class,
                 inv -> response)) {
-            int result = new WalutyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new WalutyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_LIST_COUNT, result);
@@ -81,7 +82,7 @@ class WalutyClientTest {
         // when
         try (MockedConstruction<WalutyApi> mc = mockConstructionWithAnswer(WalutyApi.class,
                 inv -> response)) {
-            int result = new WalutyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new WalutyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(EXPECTED_ZERO, result);
@@ -98,7 +99,7 @@ class WalutyClientTest {
         // when
         try (MockedConstruction<WalutyApi> mc = mockConstructionWithAnswer(WalutyApi.class,
                 inv -> response)) {
-            int result = new WalutyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new WalutyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_REPORTED_SIZE, result);
@@ -111,7 +112,7 @@ class WalutyClientTest {
         // given
         try (MockedConstruction<WalutyApi> mc = mockConstructionWithAnswer(WalutyApi.class,
                 inv -> { throw apiServerError(); })) {
-            var client = new WalutyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+            var client = new WalutyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
 
             // when / then
             assertThrows(NoviCloudException.class, () -> client.count(null));

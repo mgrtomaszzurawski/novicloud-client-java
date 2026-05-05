@@ -35,7 +35,8 @@ class RetryPolicyTest {
         assertEquals(RetryPolicy.BackoffStrategy.EXPONENTIAL, p.backoffStrategy());
         assertTrue(p.retryOn429());
         assertEquals(DEFAULT_MAX_RETRY_AFTER_SECS, p.maxRetryAfterSeconds());
-        assertTrue(p.retryPost());
+        // F-01 (1.1.0): default flipped to false - POST is not retried unless opted in
+        assertFalse(p.retryPost());
     }
 
     @Test

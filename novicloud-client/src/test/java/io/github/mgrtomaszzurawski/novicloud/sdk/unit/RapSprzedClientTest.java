@@ -11,6 +11,7 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseRapSprzedLi
 import io.github.mgrtomaszzurawski.novicloud.client.model.RaportSprzedazyRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.rapsprzed.RapSprzedClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.rapsprzed.RapSprzedClientImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
@@ -26,7 +27,7 @@ import static io.github.mgrtomaszzurawski.novicloud.sdk.TestConstants.*;
 class RapSprzedClientTest {
 
     private RapSprzedClient client() {
-        return new RapSprzedClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+        return new RapSprzedClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
     }
 
     @Test
@@ -47,7 +48,7 @@ class RapSprzedClientTest {
         // when
         try (MockedConstruction<RapSprzedApi> mc = mockConstructionWithAnswer(RapSprzedApi.class,
                 inv -> response)) {
-            int result = new RapSprzedClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new RapSprzedClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_LIST_COUNT, result);
@@ -63,7 +64,7 @@ class RapSprzedClientTest {
         // when
         try (MockedConstruction<RapSprzedApi> mc = mockConstructionWithAnswer(RapSprzedApi.class,
                 inv -> response)) {
-            int result = new RapSprzedClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new RapSprzedClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(EXPECTED_ZERO, result);
@@ -80,7 +81,7 @@ class RapSprzedClientTest {
         // when
         try (MockedConstruction<RapSprzedApi> mc = mockConstructionWithAnswer(RapSprzedApi.class,
                 inv -> response)) {
-            int result = new RapSprzedClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new RapSprzedClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_REPORTED_SIZE, result);
@@ -93,7 +94,7 @@ class RapSprzedClientTest {
         // given
         try (MockedConstruction<RapSprzedApi> mc = mockConstructionWithAnswer(RapSprzedApi.class,
                 inv -> { throw apiServerError(); })) {
-            var client = new RapSprzedClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+            var client = new RapSprzedClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
 
             // when / then
             assertThrows(NoviCloudException.class, () -> client.count(null));

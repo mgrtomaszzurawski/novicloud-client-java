@@ -5,8 +5,6 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.model;
 
-import io.github.mgrtomaszzurawski.novicloud.client.model.WalutaRaw;
-
 /**
  * Immutable SDK model for the {@code waluta} resource.
  *
@@ -22,21 +20,4 @@ public record Waluta(
         Boolean aktywny
 )
 {
-
-    /**
-     * Creates an immutable {@code Waluta} from the generated {@code WalutaRaw}.
-     *
-     * @param raw the generated model instance; must not be {@code null}
-     * @return a new immutable {@code Waluta}
-     */
-    public static Waluta from(WalutaRaw raw) {
-        return new Waluta(
-                raw.getId(),
-                raw.getNazwa(),
-                raw.getKod(),
-                raw.getKurs(),
-                raw.getDomyslna(),
-                raw.getAktywny()
-        );
-    }
 }

@@ -6,13 +6,18 @@
 package io.github.mgrtomaszzurawski.novicloud.sdk.builder;
 
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.asorty.AsortyCreateBuilder;
+import io.github.mgrtomaszzurawski.novicloud.sdk.resources.formyplatn.FormaPlatnCreateBuilder;
+import io.github.mgrtomaszzurawski.novicloud.sdk.resources.jmiary.JmiaryCreateBuilder;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.kartyloj.KartaLojCreateBuilder;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.kontrahenci.KontrahentCreateBuilder;
+import io.github.mgrtomaszzurawski.novicloud.sdk.resources.kraje.KrajCreateBuilder;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.rappracy.RapPracyQueryBuilder;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.rapsprzed.RapSprzedQueryBuilder;
+import io.github.mgrtomaszzurawski.novicloud.sdk.resources.sklepy.SklepCreateBuilder;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.stawkivat.StawkaVatCreateBuilder;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.towary.TowarCreateBuilder;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.towary.TowarUpdateBuilder;
+import io.github.mgrtomaszzurawski.novicloud.sdk.resources.waluty.WalutaCreateBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,6 +43,8 @@ class BuilderEdgeCaseTest {
     private static final int ZERO_VAT_ID = 0;
     private static final int EXEMPT_VAT_ID = -1;
     private static final String TEST_LOJ_KOD = "LOJ-EDGE";
+    private static final String TEST_LOJ_NAZWISKO = "Test Person";
+    private static final String TEST_LOJ_TELEFON = "+48 600 000 000";
     private static final String TEST_TOWAR_KOD = "CODE";
     private static final String TEST_TOWAR_NAZWA = "Name";
     private static final int STANDARD_VAT_RATE = 2300;
@@ -221,30 +228,56 @@ class BuilderEdgeCaseTest {
     @Test
     void kartaLojBuilder_whenMinimalRequiredOnly_optionalsAreNull() {
         // given
-        // Only kod is required
+        // 1.1.0 (ADR-055): build() also requires nazwiskoImie and at least one of telefon/email.
 
         // when
-        KartaLojCreateBuilder d = KartaLojCreateBuilder.builder(TEST_LOJ_KOD).build();
+        KartaLojCreateBuilder d = KartaLojCreateBuilder.builder(TEST_LOJ_KOD)
+                .nazwiskoImie(TEST_LOJ_NAZWISKO)
+                .telefon(TEST_LOJ_TELEFON)
+                .build();
 
         // then
         assertEquals(TEST_LOJ_KOD, d.kod());
         assertNull(d.typ());
         assertNull(d.waznaOd());
         assertNull(d.waznaDo());
-        assertNull(d.nazwiskoImie());
+        assertEquals(TEST_LOJ_NAZWISKO, d.nazwiskoImie());
         assertNull(d.email());
     }
 
     @Test
     void kartaLojBuilder_whenEmptyKod_accepted() {
         // given
-        // Empty kod not rejected client-side
+        // Empty string not rejected client-side (server validates non-empty).
 
         // when
-        KartaLojCreateBuilder d = KartaLojCreateBuilder.builder(EMPTY_STRING).build();
+        KartaLojCreateBuilder d = KartaLojCreateBuilder.builder(EMPTY_STRING)
+                .nazwiskoImie(TEST_LOJ_NAZWISKO)
+                .telefon(TEST_LOJ_TELEFON)
+                .build();
 
         // then
         assertEquals(EMPTY_STRING, d.kod());
+    }
+
+    @Test
+    void kartaLojBuilder_whenNoTelefonAndNoEmail_throwsIllegalState() {
+        // given
+        var builder = KartaLojCreateBuilder.builder(TEST_LOJ_KOD)
+                .nazwiskoImie(TEST_LOJ_NAZWISKO);
+
+        // when / then
+        assertThrows(IllegalStateException.class, builder::build);
+    }
+
+    @Test
+    void kartaLojBuilder_whenNoNazwiskoImie_throwsIllegalState() {
+        // given
+        var builder = KartaLojCreateBuilder.builder(TEST_LOJ_KOD)
+                .telefon(TEST_LOJ_TELEFON);
+
+        // when / then
+        assertThrows(IllegalStateException.class, builder::build);
     }
 
     // ---- T-08: Immutability tests ----
@@ -297,44 +330,90 @@ class BuilderEdgeCaseTest {
         assertEquals(first.nip(), second.nip());
     }
 
-    // ---- T-09: Required field null handling ----
-    // SDK does not validate required fields client-side (server validates).
-    // Exception: StawkaVat.id (already tested above - builder_whenNullVatId_throwsIllegalArgument).
+    // ---- T-09: Required field null handling (since 1.1.0 - F-05) ----
+    // CreateBuilder factories validate required arguments via Objects.requireNonNull.
 
     @Test
-    void towarBuilder_whenNullRequiredFields_acceptedClientSide() {
-        // given / when
-        TowarCreateBuilder d = TowarCreateBuilder.builder(null, null).build();
-
-        // then
-        assertNull(d.kod());
-        assertNull(d.nazwa());
+    void towarBuilder_whenNullKod_throwsNpe() {
+        // given / when / then
+        assertThrows(NullPointerException.class, () -> TowarCreateBuilder.builder(null, "x"));
     }
 
     @Test
-    void asortyBuilder_whenNullNazwa_acceptedClientSide() {
-        // given / when
-        AsortyCreateBuilder d = AsortyCreateBuilder.builder(null).build();
-
-        // then
-        assertNull(d.nazwa());
+    void towarBuilder_whenNullNazwa_throwsNpe() {
+        // given / when / then
+        assertThrows(NullPointerException.class, () -> TowarCreateBuilder.builder("x", null));
     }
 
     @Test
-    void kontrahentBuilder_whenNullNazwa_acceptedClientSide() {
-        // given / when
-        KontrahentCreateBuilder d = KontrahentCreateBuilder.builder(null).build();
-
-        // then
-        assertNull(d.nazwa());
+    void asortyBuilder_whenNullNazwa_throwsNpe() {
+        // given / when / then
+        assertThrows(NullPointerException.class, () -> AsortyCreateBuilder.builder(null));
     }
 
     @Test
-    void kartaLojBuilder_whenNullKod_acceptedClientSide() {
-        // given / when
-        KartaLojCreateBuilder d = KartaLojCreateBuilder.builder(null).build();
+    void kontrahentBuilder_whenNullNazwa_throwsNpe() {
+        // given / when / then
+        assertThrows(NullPointerException.class, () -> KontrahentCreateBuilder.builder(null));
+    }
 
-        // then
-        assertNull(d.kod());
+    @Test
+    void kartaLojBuilder_whenNullKod_throwsNpe() {
+        // given / when / then
+        assertThrows(NullPointerException.class, () -> KartaLojCreateBuilder.builder(null));
+    }
+
+    @Test
+    void jmiaryBuilder_whenNullNazwa_throwsNpe() {
+        // given / when / then
+        assertThrows(NullPointerException.class, () -> JmiaryCreateBuilder.builder(null));
+    }
+
+    @Test
+    void krajBuilder_whenNullNazwa_throwsNpe() {
+        // given / when / then
+        assertThrows(NullPointerException.class, () -> KrajCreateBuilder.builder(null, "PL"));
+    }
+
+    @Test
+    void krajBuilder_whenNullKod_throwsNpe() {
+        // given / when / then
+        assertThrows(NullPointerException.class, () -> KrajCreateBuilder.builder("Polska", null));
+    }
+
+    @Test
+    void formaPlatnBuilder_whenNullNazwa_throwsNpe() {
+        // given / when / then
+        assertThrows(NullPointerException.class, () -> FormaPlatnCreateBuilder.builder(null, 0));
+    }
+
+    @Test
+    void formaPlatnBuilder_whenNullTyp_throwsNpe() {
+        // given / when / then
+        assertThrows(NullPointerException.class, () -> FormaPlatnCreateBuilder.builder("cash", null));
+    }
+
+    @Test
+    void sklepBuilder_whenNullNazwa_throwsNpe() {
+        // given / when / then
+        assertThrows(NullPointerException.class, () -> SklepCreateBuilder.builder(null, 1));
+    }
+
+    @Test
+    void sklepBuilder_whenNullNumer_throwsNpe() {
+        // given / when / then
+        assertThrows(NullPointerException.class, () -> SklepCreateBuilder.builder("Main shop", null));
+    }
+
+    @Test
+    void walutaBuilder_whenNullNazwa_throwsNpe() {
+        // given / when / then
+        assertThrows(NullPointerException.class, () -> WalutaCreateBuilder.builder(null, "PLN"));
+    }
+
+    @Test
+    void walutaBuilder_whenNullKod_throwsNpe() {
+        // given / when / then
+        assertThrows(NullPointerException.class, () -> WalutaCreateBuilder.builder("zloty", null));
     }
 }

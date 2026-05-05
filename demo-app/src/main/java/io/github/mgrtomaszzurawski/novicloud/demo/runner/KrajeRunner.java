@@ -10,6 +10,7 @@ import io.github.mgrtomaszzurawski.novicloud.sdk.model.Kraj;
 import io.github.mgrtomaszzurawski.novicloud.demo.runner.api.EndpointRunner;
 import io.github.mgrtomaszzurawski.novicloud.sdk.NoviCloudClient;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
+import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,15 +119,20 @@ public final class KrajeRunner implements EndpointRunner {
         if (createdId == null) { throw new AssertionError(String.format(ERR_NULL_ID_FMT, ENDPOINT)); }
         long id = Long.parseLong(createdId);
         var fetched = api.getById(id);
-        LOG.info(LOG_CUD_GET_BY_ID, ENDPOINT, id, fetched.nazwa(), fetched.kod(), fetched.walutaId());
-        verifyField(ENDPOINT, FIELD_NAZWA, DEMO_NAZWA, fetched.nazwa());
-        verifyField(ENDPOINT, FIELD_KOD, DEMO_KOD, fetched.kod());
+        String fetchedNazwa = fetched.nazwa();
+        String fetchedKod = fetched.kod();
+        String fetchedWalutaId = fetched.walutaId();
+        LOG.info(LOG_CUD_GET_BY_ID, ENDPOINT, id, fetchedNazwa, fetchedKod, fetchedWalutaId);
+        verifyField(ENDPOINT, FIELD_NAZWA, DEMO_NAZWA, fetchedNazwa);
+        verifyField(ENDPOINT, FIELD_KOD, DEMO_KOD, fetchedKod);
         api.update(KrajUpdateBuilder.builder(id).nazwa(DEMO_NAZWA_UPDATED).kod(DEMO_KOD_UPDATED).build());
         LOG.info(LOG_CUD_UPDATE, ENDPOINT, id, DEMO_NAZWA_UPDATED, DEMO_KOD_UPDATED);
         var updated = api.getById(id);
-        LOG.info(LOG_CUD_GET_AFTER_UPDATE, ENDPOINT, id, updated.nazwa(), updated.kod());
-        verifyField(ENDPOINT, FIELD_NAZWA, DEMO_NAZWA_UPDATED, updated.nazwa());
-        verifyField(ENDPOINT, FIELD_KOD, DEMO_KOD_UPDATED, updated.kod());
+        String updatedNazwa = updated.nazwa();
+        String updatedKod = updated.kod();
+        LOG.info(LOG_CUD_GET_AFTER_UPDATE, ENDPOINT, id, updatedNazwa, updatedKod);
+        verifyField(ENDPOINT, FIELD_NAZWA, DEMO_NAZWA_UPDATED, updatedNazwa);
+        verifyField(ENDPOINT, FIELD_KOD, DEMO_KOD_UPDATED, updatedKod);
         api.deleteById(id);
         LOG.info(LOG_CUD_DELETE, ENDPOINT, id);
         verifyDeleteBehavior(api, id);
@@ -144,11 +150,11 @@ public final class KrajeRunner implements EndpointRunner {
     }
 
     private void verifyDeleteBehavior(KrajeClient api, Long id) {
-        var response = api.getById(id);
-        if (response == null) {
-            LOG.info(LOG_CUD_HARD_DELETE, ENDPOINT, id);
-        } else {
+        try {
+            api.getById(id);
             LOG.info(LOG_CUD_SOFT_DELETE, ENDPOINT, id);
+        } catch (NoviCloudNotFoundException expected) {
+            LOG.info(LOG_CUD_HARD_DELETE, ENDPOINT, id);
         }
     }
 

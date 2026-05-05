@@ -5,7 +5,6 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.model;
 
-import io.github.mgrtomaszzurawski.novicloud.client.model.KartaLojalnosciowaRaw;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -59,37 +58,5 @@ public record KartaLojalnosciowa(
             }
             return null;
         }
-    }
-
-    /**
-     * Creates an immutable {@code KartaLojalnosciowa} from the generated {@code KartaLojalnosciowaRaw}.
-     *
-     * @param raw the generated model instance; must not be {@code null}
-     * @return a new immutable {@code KartaLojalnosciowa}
-     */
-    public static KartaLojalnosciowa from(KartaLojalnosciowaRaw raw) {
-        return new KartaLojalnosciowa(
-                raw.getKod(),
-                raw.getTyp(),
-                raw.getWaznaOd(),
-                raw.getWaznaDo(),
-                raw.getPosiadacz(),
-                raw.getOpis1(),
-                raw.getOpis2(),
-                raw.getUniewazniono(),
-                raw.getNazwiskoImie(),
-                raw.getSkrot(),
-                raw.getTelefon(),
-                raw.getEmail(),
-                raw.getMiejscowosc(),
-                raw.getUlica(),
-                raw.getNrDomu(),
-                raw.getNrLokalu(),
-                raw.getKodPoczt(),
-                raw.getPoczta(),
-                raw.getNip(),
-                raw.getDataUrodz(),
-                raw.getPlec() != null ? Plec.fromCode(raw.getPlec().getValue()) : null
-        );
     }
 }

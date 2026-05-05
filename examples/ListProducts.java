@@ -21,24 +21,23 @@ public class ListProducts {
         // create() - shorthand with default settings (3 retries, exponential backoff)
         // Use NoviCloudClient.builder() instead to customize retry, timeouts, etc.
         // (see CustomRetryPolicy.java)
-        NoviCloudClient client = NoviCloudClient.create(
+        try (NoviCloudClient client = NoviCloudClient.create(
                 System.getenv("NOVICLOUD_ACCOUNT_NAME"),
-                System.getenv("NOVICLOUD_PASSWORD"));
+                System.getenv("NOVICLOUD_PASSWORD"))) {
 
-        // list() returns PagedResult<T> - totalCount() reads size from the first page response,
-        // no separate count() HTTP call needed
-        TowarQueryBuilder activeFilter = TowarQueryBuilder.builder()
-                .aktywny(true)
-                .build();
-        PagedResult<Towar> result = client.towary().list(activeFilter);
-        System.out.println("Active products: " + result.totalCount());
+            // list() returns PagedResult<T> - totalCount() reads size from the first page response,
+            // no separate count() HTTP call needed
+            TowarQueryBuilder activeFilter = TowarQueryBuilder.builder()
+                    .aktywny(true)
+                    .build();
+            PagedResult<Towar> result = client.towary().list(activeFilter);
+            System.out.println("Active products: " + result.totalCount());
 
-        // Iterate - PagedResult<T> implements Iterable<T>, pages fetched lazily on demand
-        for (Towar t : result) {
-            System.out.printf("  [%d] %s (kod=%s, VAT=%d)%n",
-                    t.id(), t.nazwa(), t.kod(), t.stawkaVat());
+            // Iterate - PagedResult<T> implements Iterable<T>, pages fetched lazily on demand
+            for (Towar t : result) {
+                System.out.printf("  [%d] %s (kod=%s, VAT=%d)%n",
+                        t.id(), t.nazwa(), t.kod(), t.stawkaVat());
+            }
         }
-
-        client.close();
     }
 }

@@ -6,6 +6,7 @@
 package io.github.mgrtomaszzurawski.novicloud.sdk;
 
 import io.github.mgrtomaszzurawski.novicloud.client.ApiException;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.RetryHandler;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudRateLimitException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudServerException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
@@ -118,17 +119,30 @@ class RetryHandlerTest {
     }
 
     @Test
-    void executePost_whenRetryPostDisabledAnd429_stillRetries() {
-        // given
-        // retryPost only suppresses 5xx retries for POST, not 429
+    void executePost_whenRetryPostDisabledAnd429_doesNotRetry() {
+        // given - CF-02 (1.1.0): retryPost(false) covers both 5xx AND 429 for POST
         RetryPolicy policy = RetryPolicy.builder()
                 .retryPost(false).maxAttempts(MAX_ATTEMPTS_2)
                 .backoffStrategy(RetryPolicy.BackoffStrategy.FIXED).build();
         RetryHandler handler = new RetryHandler(policy);
         AtomicInteger calls = new AtomicInteger();
 
-        // when - 429 should still retry (and then fail on attempt 2)
-        // then
+        // when / then - first attempt throws and the SDK does not retry POST on 429
+        assertThrows(NoviCloudRateLimitException.class, () ->
+                handler.executePost(() -> { calls.incrementAndGet(); throw apiEx(HTTP_429); }, OP_NAME));
+        assertEquals(MAX_ATTEMPTS_1, calls.get());
+    }
+
+    @Test
+    void executePost_whenRetryPostEnabledAnd429_retriesUntilLimit() {
+        // given - opting in retries POST for 429 too
+        RetryPolicy policy = RetryPolicy.builder()
+                .retryPost(true).maxAttempts(MAX_ATTEMPTS_2)
+                .backoffStrategy(RetryPolicy.BackoffStrategy.FIXED).build();
+        RetryHandler handler = new RetryHandler(policy);
+        AtomicInteger calls = new AtomicInteger();
+
+        // when / then
         assertThrows(NoviCloudRateLimitException.class, () ->
                 handler.executePost(() -> { calls.incrementAndGet(); throw apiEx(HTTP_429); }, OP_NAME));
         assertEquals(MAX_ATTEMPTS_2, calls.get());

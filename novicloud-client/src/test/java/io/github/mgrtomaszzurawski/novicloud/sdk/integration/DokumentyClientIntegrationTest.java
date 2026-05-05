@@ -42,6 +42,16 @@ class DokumentyClientIntegrationTest {
     private static final double EXPECTED_NETTO = 100.0;
     private static final double EXPECTED_PODATEK = 23.0;
     private static final double EXPECTED_BRUTTO = 123.0;
+    private static final int EXPECTED_ROZBICIE_VAT_COUNT = 1;
+    private static final int EXPECTED_VAT_RATE = 2300;
+    private static final int EXPECTED_PLATNOSCI_COUNT = 1;
+    private static final String EXPECTED_PLATNOSC_KOD_WALUTY = "PLN";
+    private static final String EXPECTED_KOREKTY_FIRST_ID = "11";
+    private static final String EXPECTED_FAKTURY_FIRST_ID = "12";
+    private static final String EXPECTED_DOK_MAGAZYNOWE_FIRST_ID = "13";
+    private static final String EXPECTED_PARAGONY_FIRST_ID = "14";
+    private static final String EXPECTED_ROZLICZANY_DOK_ID = "100";
+    private static final String EXPECTED_POZYCJE_ID = "1";
 
     // HTTP status codes
 
@@ -113,6 +123,17 @@ class DokumentyClientIntegrationTest {
         assertEquals(EXPECTED_NETTO, d.netto());
         assertEquals(EXPECTED_PODATEK, d.podatek());
         assertEquals(EXPECTED_BRUTTO, d.brutto());
+        assertEquals(EXPECTED_ROZBICIE_VAT_COUNT, d.rozbicieVat().size());
+        assertEquals(EXPECTED_VAT_RATE, d.rozbicieVat().get(FIRST_INDEX).stawka());
+        assertEquals(EXPECTED_PLATNOSCI_COUNT, d.platnosci().size());
+        assertEquals(EXPECTED_PLATNOSC_KOD_WALUTY, d.platnosci().get(FIRST_INDEX).kodWaluty());
+        assertEquals(EXPECTED_KOREKTY_FIRST_ID, d.korektyIds().get(FIRST_INDEX));
+        assertEquals(EXPECTED_FAKTURY_FIRST_ID, d.fakturyIds().get(FIRST_INDEX));
+        assertEquals(EXPECTED_DOK_MAGAZYNOWE_FIRST_ID, d.dokMagazynoweIds().get(FIRST_INDEX));
+        assertEquals(EXPECTED_PARAGONY_FIRST_ID, d.paragonyIds().get(FIRST_INDEX));
+        assertEquals(EXPECTED_ROZLICZANY_DOK_ID, d.dokRozliczane().get(FIRST_INDEX).dokumentId());
+        assertEquals(EXPECTED_POZYCJE_ID, d.pozycjeId());
+        assertNotNull(d.pozycjeUrl());
     }
 
     // -----------------------------------------------------------------------

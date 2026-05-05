@@ -5,6 +5,8 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.resources.sklepy;
 
+import java.util.Objects;
+
 /**
  * Immutable data transfer object for creating a new sklep record. Required: {@code nazwa}, {@code numer}.
  *
@@ -143,7 +145,10 @@ public final class SklepCreateBuilder {
         private String konto;
         private Boolean aktywny;
 
-        private Builder(String nazwa, Integer numer) { this.nazwa = nazwa; this.numer = numer; }
+        private Builder(String nazwa, Integer numer) {
+            this.nazwa = Objects.requireNonNull(nazwa, "nazwa must not be null");
+            this.numer = Objects.requireNonNull(numer, "numer must not be null");
+        }
 
         /** Sets Record ID. @return this builder */
         public Builder id(Long id) { this.id = id; return this; }

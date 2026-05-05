@@ -3,14 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  * https://github.com/mgrtomaszzurawski/novicloud-client-java
  */
-package io.github.mgrtomaszzurawski.novicloud.sdk.model;
+package io.github.mgrtomaszzurawski.novicloud.sdk.internal.mapper;
 
 import io.github.mgrtomaszzurawski.novicloud.client.model.LinkRaw;
 
 /**
  * Shared utility for extracting link identifiers from raw API responses.
  *
- * @since 1.0.0
+ * <p>Internal API since 2.0.0 (moved from {@code sdk.model} into the
+ * non-exported {@code sdk.internal.mapper} package). Used by
+ * {@link RawMappers} to flatten {@link LinkRaw} fields into plain
+ * {@code String} IDs in the public records.
  */
 public final class LinkUtils {
 

@@ -90,10 +90,10 @@ public final class PagedResult<T> implements Iterable<T> {
      * method and is not visible in the returned type. Callers receive {@code PagedResult<T>}.
      *
      * @param <T>               element type (SDK record)
-     * @param <P>               page response type (generated Raw class, e.g. {@code ApiResponseTowaryListRaw})
+     * @param <P>               page response type (an internal page-envelope class; never visible to callers)
      * @param firstPage         fetches the first page using the query already captured in the closure
      * @param urlFetch          fetches any page by its absolute URL (used for pagination and random access)
-     * @param dataExtractor     extracts and maps items from a page response (Raw to T, handles null)
+     * @param dataExtractor     extracts and maps items from a page response into SDK records (handles null)
      * @param selfLinkExtractor extracts the {@code links.self} URL string from a page response;
      *                          may return {@code null} if not present
      * @param sizeExtractor     extracts the total record count ({@code size} field);

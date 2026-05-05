@@ -11,6 +11,7 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseTowaryListR
 import io.github.mgrtomaszzurawski.novicloud.client.model.TowarRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.towary.TowaryClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.towary.TowaryClientImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
@@ -26,7 +27,7 @@ import static io.github.mgrtomaszzurawski.novicloud.sdk.TestConstants.*;
 class TowaryClientTest {
 
     private TowaryClient client() {
-        return new TowaryClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+        return new TowaryClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
     }
 
     @Test
@@ -65,7 +66,7 @@ class TowaryClientTest {
         // when
         try (MockedConstruction<TowaryApi> mc = mockConstructionWithAnswer(TowaryApi.class,
                 inv -> response)) {
-            int result = new TowaryClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new TowaryClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_LIST_COUNT, result);
@@ -81,7 +82,7 @@ class TowaryClientTest {
         // when
         try (MockedConstruction<TowaryApi> mc = mockConstructionWithAnswer(TowaryApi.class,
                 inv -> response)) {
-            int result = new TowaryClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new TowaryClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(EXPECTED_ZERO, result);
@@ -98,7 +99,7 @@ class TowaryClientTest {
         // when
         try (MockedConstruction<TowaryApi> mc = mockConstructionWithAnswer(TowaryApi.class,
                 inv -> response)) {
-            int result = new TowaryClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new TowaryClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_REPORTED_SIZE, result);
@@ -111,7 +112,7 @@ class TowaryClientTest {
         // given
         try (MockedConstruction<TowaryApi> mc = mockConstructionWithAnswer(TowaryApi.class,
                 inv -> { throw apiServerError(); })) {
-            var client = new TowaryClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+            var client = new TowaryClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
 
             // when / then
             assertThrows(NoviCloudException.class, () -> client.count(null));

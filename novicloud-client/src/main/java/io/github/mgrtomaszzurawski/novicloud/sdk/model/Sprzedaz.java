@@ -5,8 +5,8 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.model;
 
-import io.github.mgrtomaszzurawski.novicloud.client.model.SprzedazRaw;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Immutable SDK model for the {@code sprzedaz} resource.
@@ -33,37 +33,8 @@ public record Sprzedaz(
         String sklepId,
         String kasaId,
         String kasjerId,
-        String kontrahentId
+        String kontrahentId,
+        List<Platnosc> platnosci
 )
 {
-
-    /**
-     * Creates an immutable {@code Sprzedaz} from the generated {@code SprzedazRaw}.
-     *
-     * @param raw the generated model instance; must not be {@code null}
-     * @return a new immutable {@code Sprzedaz}
-     */
-    public static Sprzedaz from(SprzedazRaw raw) {
-        return new Sprzedaz(
-                raw.getId(),
-                raw.getData(),
-                raw.getNrDok(),
-                raw.getTypDok(),
-                raw.getNrSystemowy(),
-                raw.getNrFiskalny(),
-                raw.getNrRapDob(),
-                raw.getIlosc(),
-                raw.getCena(),
-                raw.getCenaPrzedRab(),
-                raw.getStawkaVat(),
-                raw.getBrutto(),
-                raw.getPodatek(),
-                raw.getRabat(),
-                LinkUtils.extractId(raw.getTowar()),
-                LinkUtils.extractId(raw.getSklep()),
-                LinkUtils.extractId(raw.getKasa()),
-                LinkUtils.extractId(raw.getKasjer()),
-                LinkUtils.extractId(raw.getKontrahent())
-        );
-    }
 }

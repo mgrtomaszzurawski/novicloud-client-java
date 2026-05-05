@@ -5,206 +5,77 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.resources.kraje;
 
-import io.github.mgrtomaszzurawski.novicloud.sdk.RetryPolicy;
-import io.github.mgrtomaszzurawski.novicloud.sdk.RetryHandler;
-import io.github.mgrtomaszzurawski.novicloud.client.ApiClient;
-import io.github.mgrtomaszzurawski.novicloud.client.ApiException;
-import io.github.mgrtomaszzurawski.novicloud.client.api.KrajeApi;
-import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseCreatedRaw;
-import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseKrajeListRaw;
-import io.github.mgrtomaszzurawski.novicloud.client.model.KrajRaw;
-import io.github.mgrtomaszzurawski.novicloud.client.model.LinkRaw;
-import io.github.mgrtomaszzurawski.novicloud.sdk.paging.LinkFetcher;
-import io.github.mgrtomaszzurawski.novicloud.sdk.paging.PagedResult;
+import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
+import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudNotFoundException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.model.Kraj;
-
-import java.util.List;
-import java.util.Objects;
+import io.github.mgrtomaszzurawski.novicloud.sdk.paging.PagedResult;
 
 /**
  * Client for the {@code kraje} (countries) endpoint of the NoviCloud API.
  *
- * <p>Obtain an instance from {@link io.github.mgrtomaszzurawski.novicloud.sdk.NoviCloudClient#kraje()}.
+ * <p>Obtain an instance from
+ * {@link io.github.mgrtomaszzurawski.novicloud.sdk.NoviCloudClient} accessors.
+ * Implementation lives in the non-exported {@code sdk.internal.resources.kraje}
+ * package; external code should depend on this interface only.
  *
- * <p>Supports full CRUD operations: list, count, getById, create, update, deleteById.
- * @since 1.0.0
+ * @since 2.0.0
  */
-public final class KrajeClient {
-
-    private final ApiClient apiClient;
-    private final KrajeApi api;
-    private final String accountName;
-
-    private static final int EMPTY_COUNT = 0;
-    private static final String ERR_NULL_SUFFIX = " must not be null";
-    private static final String ERR_LIST_PAGE = "Failed to list kraje page";
-    private static final String ERR_GET_BY_ID = "Failed to fetch kraj by id";
-    private static final String ERR_CREATE = "Failed to create kraj";
-    private static final String ERR_UPDATE = "Failed to update kraj";
-    private static final String ERR_DELETE = "Failed to delete kraj by id";
-    private static final String ERR_LINK_CALL = "Kraje link call failed";
-    private static final String ERR_BUILDER_NULL = "builder must not be null";
-    private static final String FIELD_ID = "id";
-    private final RetryHandler retryHandler;
-
-    public KrajeClient(ApiClient apiClient, String accountName, RetryPolicy retryPolicy) {
-        this.apiClient = apiClient;
-        this.accountName = accountName;
-        this.api = new KrajeApi(apiClient);
-        this.retryHandler = new RetryHandler(retryPolicy);
-    }
-
-    private ApiResponseKrajeListRaw listPage(KrajQueryBuilder query) {
-        KrajQueryBuilder safe = query != null ? query : KrajQueryBuilder.builder().build();
-        return retryHandler.execute(() -> api.listKraje(accountName, safe.start(), null, safe.fts(),
-                    safe.id(), safe.nazwa(), safe.kod(), safe.walutaId()), ERR_LIST_PAGE);
-    }
+public interface KrajeClient {
 
     /**
-     * Returns a lazy iterable over all kraj matching the given filters.
-     * Pages are fetched on demand as the iterator advances. If {@code query} is {@code null},
-     * all records are returned with default page size.
+     * Returns a lazy paginated result over all countries matching the given filters.
      *
      * @param query filter parameters, or {@code null} for no filtering
-     * @return a {@link PagedResult} over all matching {@link Kraj} records
-     * @throws io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException on API failure
-     *         (thrown when the iterator fetches each page)
+     * @return a {@link PagedResult} of matching records (pages fetched on demand)
+     * @throws NoviCloudException on API failure (thrown when the iterator fetches each page)
      */
-    public PagedResult<Kraj> list(KrajQueryBuilder query) {
-        KrajQueryBuilder safe = query != null ? query : KrajQueryBuilder.builder().build();
-        return PagedResult.of(
-                () -> listPage(safe),
-                this::fetchByLink,
-                p -> {
-                    var items = p.getDane();
-                    return items == null ? List.of() : items.stream().map(Kraj::from).toList();
-                },
-                KrajeClient::extractSelfLink,
-                p -> p.getSize() != null ? p.getSize() : PagedResult.UNKNOWN,
-                p -> p.getOnPage() != null ? p.getOnPage() : PagedResult.UNKNOWN
-        );
-    }
+    PagedResult<Kraj> list(KrajQueryBuilder query);
 
     /**
-     * Returns the total number of kraj matching the given filters.
+     * Returns the total number of countries matching the given filters.
      *
      * @param query filter parameters, or {@code null} for no filtering
      * @return total record count
-     * @throws io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException on API failure
+     * @throws NoviCloudException on API failure
      */
-    public int count(KrajQueryBuilder query) {
-        ApiResponseKrajeListRaw response = listPage(query);
-        Integer total = response.getSize();
-        if (total != null) {
-            return total;
-        }
-        List<KrajRaw> data = response.getDane();
-        return data == null ? EMPTY_COUNT : data.size();
-    }
+    int count(KrajQueryBuilder query);
 
     /**
-     * Fetches a single kraj by its numeric ID.
+     * Fetches a single countries record by its numeric ID.
      *
-     * @param id the kraj ID; must not be {@code null}
-     * @return the kraj record; never {@code null}
+     * @param id the record ID; must not be {@code null}
+     * @return the record; never {@code null}
      * @throws IllegalArgumentException if {@code id} is {@code null}
-     * @throws io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudNotFoundException
-     *         if no kraj with the given ID exists
-     * @throws io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException on other API failure
+     * @throws NoviCloudNotFoundException if no countries record with the given ID exists
+     * @throws NoviCloudException on other API failure
      */
-    public Kraj getById(Long id) {
-        requireNotNull(id, FIELD_ID);
-        KrajRaw raw = retryHandler.execute(() -> api.getKrajById(accountName, id), ERR_GET_BY_ID).getDane();
-        return Kraj.from(raw);
-    }
+    Kraj getById(Long id);
 
     /**
-     * Creates a new kraj. Required fields are enforced by the builder factory method.
+     * Creates a new countries record.
      *
-     * @param builder the kraj data; must not be {@code null}
-     * @return the ID of the created record, or {@code null} if the server did not return one
-     * @throws io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException on API failure
+     * @param builder the data; must not be {@code null}
+     * @return the ID (or code) of the created record, or {@code null} if the server did not return one
+     * @throws NoviCloudException on API failure
      */
-    public String create(KrajCreateBuilder builder) {
-        KrajRaw body = toKraj(builder);
-        ApiResponseCreatedRaw response = retryHandler.executePost(() -> api.createKraj(accountName, body), ERR_CREATE);
-        return response != null && response.getDane() != null ? response.getDane().getId() : null;
-    }
+    String create(KrajCreateBuilder builder);
 
     /**
-     * Updates an existing kraj. The {@code id} field in the builder identifies the record to update.
+     * Updates an existing countries record. The identifier field in the builder identifies the record.
      *
-     * @param builder the updated kraj data; must not be {@code null}
-     * @throws io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudNotFoundException
-     *         if no kraj with the given ID exists
-     * @throws io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException on other API failure
+     * @param builder the updated data; must not be {@code null}
+     * @throws NoviCloudNotFoundException if no countries record with the given identifier exists
+     * @throws NoviCloudException on other API failure
      */
-    public void update(KrajUpdateBuilder builder) {
-        KrajRaw body = toKraj(builder);
-        retryHandler.run(() -> api.updateKraje(accountName, body), ERR_UPDATE);
-    }
+    void update(KrajUpdateBuilder builder);
 
     /**
-     * Deletes the kraj with the given ID.
+     * Deletes the record with the given ID.
      *
-     * @param id the kraj ID; must not be {@code null}
+     * @param id the record ID; must not be {@code null}
      * @throws IllegalArgumentException if {@code id} is {@code null}
-     * @throws io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudNotFoundException
-     *         if no kraj with the given ID exists
-     * @throws io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException on other API failure
+     * @throws NoviCloudNotFoundException if no record with the given ID exists
+     * @throws NoviCloudException on other API failure
      */
-    public void deleteById(Long id) {
-        requireNotNull(id, FIELD_ID);
-        retryHandler.run(() -> api.deleteKraj(accountName, id), ERR_DELETE);
-    }
-
-    private ApiResponseKrajeListRaw doFetchByLink(String link) throws ApiException {
-        return LinkFetcher.fetch(link, apiClient, ApiResponseKrajeListRaw.class);
-    }
-
-    private ApiResponseKrajeListRaw fetchByLink(String link) {
-        return retryHandler.execute(() -> doFetchByLink(link), ERR_LINK_CALL);
-    }
-
-    private static String extractSelfLink(ApiResponseKrajeListRaw response) {
-        if (response == null || response.getLinks() == null || response.getLinks().getSelf() == null) {
-            return null;
-        }
-        return response.getLinks().getSelf().toString();
-    }
-
-    private static KrajRaw toKraj(KrajCreateBuilder builder) {
-        Objects.requireNonNull(builder, ERR_BUILDER_NULL);
-        KrajRaw kraj = new KrajRaw();
-        kraj.setId(builder.id());
-        kraj.setNazwa(builder.nazwa());
-        kraj.setKod(builder.kod());
-        if (builder.walutaId() != null) {
-            LinkRaw waluta = new LinkRaw();
-            waluta.setId(builder.walutaId());
-            kraj.setWaluta(waluta);
-        }
-        return kraj;
-    }
-
-    private static KrajRaw toKraj(KrajUpdateBuilder builder) {
-        Objects.requireNonNull(builder, ERR_BUILDER_NULL);
-        KrajRaw kraj = new KrajRaw();
-        kraj.setId(builder.id());
-        kraj.setNazwa(builder.nazwa());
-        kraj.setKod(builder.kod());
-        if (builder.walutaId() != null) {
-            LinkRaw waluta = new LinkRaw();
-            waluta.setId(builder.walutaId());
-            kraj.setWaluta(waluta);
-        }
-        return kraj;
-    }
-
-    private static void requireNotNull(Object value, String fieldName) {
-        if (value == null) {
-            throw new IllegalArgumentException(fieldName + ERR_NULL_SUFFIX);
-        }
-    }
-
+    void deleteById(Long id);
 }

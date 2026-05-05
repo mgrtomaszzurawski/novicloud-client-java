@@ -5,8 +5,6 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.model;
 
-import io.github.mgrtomaszzurawski.novicloud.client.model.RaportSprzedazyRaw;
-
 /**
  * Immutable SDK model for the {@code raportsprzedazy} resource.
  *
@@ -37,36 +35,4 @@ public record RaportSprzedazy(
         String formaPlatnId
 )
 {
-
-    /**
-     * Creates an immutable {@code RaportSprzedazy} from the generated {@code RaportSprzedazyRaw}.
-     *
-     * @param raw the generated model instance; must not be {@code null}
-     * @return a new immutable {@code RaportSprzedazy}
-     */
-    public static RaportSprzedazy from(RaportSprzedazyRaw raw) {
-        return new RaportSprzedazy(
-                raw.getKartaRabatowa(),
-                raw.getIlosc(),
-                raw.getSprzNetto(),
-                raw.getSprzBrutto(),
-                raw.getSprzZakNetto(),
-                raw.getSprzZakBrutto(),
-                raw.getMarzaNetto(),
-                raw.getMarzaBrutto(),
-                raw.getMarzaProcNetto(),
-                raw.getMarzaProcBrutto(),
-                raw.getNarzutProcNetto(),
-                raw.getNarzutProcBrutto(),
-                raw.getRabat(),
-                raw.getRabatProc(),
-                LinkUtils.extractId(raw.getTowar()),
-                LinkUtils.extractId(raw.getAsort()),
-                LinkUtils.extractId(raw.getSklep()),
-                LinkUtils.extractId(raw.getKasa()),
-                LinkUtils.extractId(raw.getKasjer()),
-                LinkUtils.extractId(raw.getKontrahent()),
-                LinkUtils.extractId(raw.getFormaPlatn())
-        );
-    }
 }

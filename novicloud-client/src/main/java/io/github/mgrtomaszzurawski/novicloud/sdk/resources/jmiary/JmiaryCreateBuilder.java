@@ -5,6 +5,8 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.resources.jmiary;
 
+import java.util.Objects;
+
 /**
  * Immutable data transfer object for creating a new jmiary record. Required: {@code nazwa}.
  *
@@ -59,7 +61,9 @@ public final class JmiaryCreateBuilder {
         private String nazwa;
         private Integer precyzja;
 
-        private Builder(String nazwa) { this.nazwa = nazwa; }
+        private Builder(String nazwa) {
+            this.nazwa = Objects.requireNonNull(nazwa, "nazwa must not be null");
+        }
 
         /** Sets Record ID. @return this builder */
         public Builder id(Long id) { this.id = id; return this; }

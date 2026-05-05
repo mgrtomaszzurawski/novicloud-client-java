@@ -25,6 +25,32 @@
         "brutto": 123.0
       }
     ],
+    "platnosci": [
+      {
+        "forma_platnosci": { "id": "5" },
+        "waluta": { "id": "1" },
+        "typ_formy_platnosci": 0,
+        "kod_waluty": "PLN",
+        "kurs": 1.0,
+        "wplata_waluta": 123.0,
+        "kwota": 123.0
+      }
+    ],
+    "korekty": [
+      { "id": "11", "link": "http://localhost/demo/dokumenty/11" }
+    ],
+    "faktury": [
+      { "id": "12", "link": "http://localhost/demo/dokumenty/12" }
+    ],
+    "dok_magazynowe": [
+      { "id": "13", "link": "http://localhost/demo/dokumenty/13" }
+    ],
+    "paragony": [
+      { "id": "14", "link": "http://localhost/demo/dokumenty/14" }
+    ],
+    "dok_roliczane": [
+      { "dokument": { "id": "100" }, "zaplacono": 50.0 }
+    ],
     "pozycje": {
       "id": "1",
       "link": "http://localhost/demo/pozdok?dokument.id=1"

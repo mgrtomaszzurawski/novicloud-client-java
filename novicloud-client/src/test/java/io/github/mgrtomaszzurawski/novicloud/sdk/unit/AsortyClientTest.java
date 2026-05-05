@@ -11,6 +11,7 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseAsortyListR
 import io.github.mgrtomaszzurawski.novicloud.client.model.AsortyRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.asorty.AsortyClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.asorty.AsortyClientImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
@@ -26,7 +27,7 @@ import static io.github.mgrtomaszzurawski.novicloud.sdk.TestConstants.*;
 class AsortyClientTest {
 
     private AsortyClient client() {
-        return new AsortyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+        return new AsortyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
     }
 
     @Test
@@ -65,7 +66,7 @@ class AsortyClientTest {
         // when
         try (MockedConstruction<AsortyApi> mc = mockConstructionWithAnswer(AsortyApi.class,
                 inv -> response)) {
-            int result = new AsortyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new AsortyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_LIST_COUNT, result);
@@ -81,7 +82,7 @@ class AsortyClientTest {
         // when
         try (MockedConstruction<AsortyApi> mc = mockConstructionWithAnswer(AsortyApi.class,
                 inv -> response)) {
-            int result = new AsortyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new AsortyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(EXPECTED_ZERO, result);
@@ -98,7 +99,7 @@ class AsortyClientTest {
         // when
         try (MockedConstruction<AsortyApi> mc = mockConstructionWithAnswer(AsortyApi.class,
                 inv -> response)) {
-            int result = new AsortyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new AsortyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_REPORTED_SIZE, result);
@@ -111,7 +112,7 @@ class AsortyClientTest {
         // given
         try (MockedConstruction<AsortyApi> mc = mockConstructionWithAnswer(AsortyApi.class,
                 inv -> { throw apiServerError(); })) {
-            var client = new AsortyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+            var client = new AsortyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
 
             // when / then
             assertThrows(NoviCloudException.class, () -> client.count(null));

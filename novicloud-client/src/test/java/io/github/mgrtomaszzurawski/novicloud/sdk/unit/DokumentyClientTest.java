@@ -11,6 +11,7 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseDokumentyLi
 import io.github.mgrtomaszzurawski.novicloud.client.model.DokumentRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.dokumenty.DokumentyClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.dokumenty.DokumentyClientImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
@@ -26,7 +27,7 @@ import static io.github.mgrtomaszzurawski.novicloud.sdk.TestConstants.*;
 class DokumentyClientTest {
 
     private DokumentyClient client() {
-        return new DokumentyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+        return new DokumentyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
     }
 
     @Test
@@ -56,7 +57,7 @@ class DokumentyClientTest {
         // when
         try (MockedConstruction<DokumentyApi> mc = mockConstructionWithAnswer(DokumentyApi.class,
                 inv -> response)) {
-            int result = new DokumentyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new DokumentyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_LIST_COUNT, result);
@@ -72,7 +73,7 @@ class DokumentyClientTest {
         // when
         try (MockedConstruction<DokumentyApi> mc = mockConstructionWithAnswer(DokumentyApi.class,
                 inv -> response)) {
-            int result = new DokumentyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new DokumentyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(EXPECTED_ZERO, result);
@@ -89,7 +90,7 @@ class DokumentyClientTest {
         // when
         try (MockedConstruction<DokumentyApi> mc = mockConstructionWithAnswer(DokumentyApi.class,
                 inv -> response)) {
-            int result = new DokumentyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new DokumentyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_REPORTED_SIZE, result);
@@ -102,7 +103,7 @@ class DokumentyClientTest {
         // given
         try (MockedConstruction<DokumentyApi> mc = mockConstructionWithAnswer(DokumentyApi.class,
                 inv -> { throw apiServerError(); })) {
-            var client = new DokumentyClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+            var client = new DokumentyClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
 
             // when / then
             assertThrows(NoviCloudException.class, () -> client.count(null));

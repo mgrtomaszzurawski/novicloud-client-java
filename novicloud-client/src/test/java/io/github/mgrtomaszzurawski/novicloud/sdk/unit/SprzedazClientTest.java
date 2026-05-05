@@ -11,6 +11,7 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseSprzedazLis
 import io.github.mgrtomaszzurawski.novicloud.client.model.SprzedazRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.sprzedaz.SprzedazClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.sprzedaz.SprzedazClientImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
@@ -26,7 +27,7 @@ import static io.github.mgrtomaszzurawski.novicloud.sdk.TestConstants.*;
 class SprzedazClientTest {
 
     private SprzedazClient client() {
-        return new SprzedazClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+        return new SprzedazClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
     }
 
     @Test
@@ -56,7 +57,7 @@ class SprzedazClientTest {
         // when
         try (MockedConstruction<SprzedazApi> mc = mockConstructionWithAnswer(SprzedazApi.class,
                 inv -> response)) {
-            int result = new SprzedazClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new SprzedazClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_LIST_COUNT, result);
@@ -72,7 +73,7 @@ class SprzedazClientTest {
         // when
         try (MockedConstruction<SprzedazApi> mc = mockConstructionWithAnswer(SprzedazApi.class,
                 inv -> response)) {
-            int result = new SprzedazClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new SprzedazClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(EXPECTED_ZERO, result);
@@ -89,7 +90,7 @@ class SprzedazClientTest {
         // when
         try (MockedConstruction<SprzedazApi> mc = mockConstructionWithAnswer(SprzedazApi.class,
                 inv -> response)) {
-            int result = new SprzedazClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new SprzedazClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_REPORTED_SIZE, result);
@@ -102,7 +103,7 @@ class SprzedazClientTest {
         // given
         try (MockedConstruction<SprzedazApi> mc = mockConstructionWithAnswer(SprzedazApi.class,
                 inv -> { throw apiServerError(); })) {
-            var client = new SprzedazClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+            var client = new SprzedazClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
 
             // when / then
             assertThrows(NoviCloudException.class, () -> client.count(null));

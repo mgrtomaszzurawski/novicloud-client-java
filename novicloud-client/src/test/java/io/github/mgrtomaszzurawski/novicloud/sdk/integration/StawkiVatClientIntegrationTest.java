@@ -117,6 +117,21 @@ class StawkiVatClientIntegrationTest {
     }
 
     @Test
+    void getById_whenServerReturnsUnknownEtykietaEnum_returnsRecordWithNullEtykieta() {
+        // given - CF-04: unknown etykieta letter (e.g. "Z") must not break deserialization
+        String json = "{\"status\":200,\"status_opis\":\"Ok\",\"dane\":{"
+                + "\"id\":2300,\"opis\":\"23%\",\"etykieta\":\"Z\"}}";
+        stubFor(get(urlPathMatching(URL_BY_ID)).willReturn(okJson(json)));
+
+        // when
+        StawkaVat sv = client.stawkiVat().getById((long) EXPECTED_23PCT_ID);
+
+        // then
+        assertNotNull(sv);
+        assertNull(sv.etykieta(), "unknown etykieta code must map to null, not throw");
+    }
+
+    @Test
     void create_whenServerAccepts_returnsCreatedId() {
         // given
         stubFor(post(urlPathMatching(URL_LIST))
@@ -206,6 +221,19 @@ class StawkiVatClientIntegrationTest {
         NoviCloudNotFoundException ex = assertThrows(NoviCloudNotFoundException.class,
                 () -> resource.getById(NON_EXISTENT_ID));
         assertEquals(HTTP_NOT_FOUND, ex.getStatusCode());
+    }
+
+    @Test
+    void getById_whenServerReturns200WithNullDane_throwsNotFoundException() {
+        // given - hard-delete endpoint may return HTTP 200 with dane=null per ADR-033
+        stubFor(get(urlPathMatching(URL_BY_ID))
+                .willReturn(okJson("{\"status\":200,\"status_opis\":\"Ok\",\"dane\":null}")));
+
+        // when / then
+        var resource = client.stawkiVat();
+        NoviCloudNotFoundException ex = assertThrows(NoviCloudNotFoundException.class,
+                () -> resource.getById(NON_EXISTENT_ID));
+        assertEquals(HTTP_OK, ex.getStatusCode());
     }
 
     @Test

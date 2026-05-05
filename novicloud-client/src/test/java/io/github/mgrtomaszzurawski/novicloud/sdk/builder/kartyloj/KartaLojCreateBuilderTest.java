@@ -57,7 +57,11 @@ class KartaLojCreateBuilderTest {
     @Test
     void build_whenRequiredOnly_optionalsAreNull() {
         // given / when
-        KartaLojCreateBuilder d = KartaLojCreateBuilder.builder(KartaLojTestConstants.KOD).build();
+        // 1.1.0 (ADR-055): build() also requires nazwiskoImie and at least one of telefon/email.
+        KartaLojCreateBuilder d = KartaLojCreateBuilder.builder(KartaLojTestConstants.KOD)
+                .nazwiskoImie(NAZWISKO_IMIE)
+                .telefon(TELEFON)
+                .build();
 
         // then
         assertEquals(KartaLojTestConstants.KOD, d.kod());
@@ -65,7 +69,7 @@ class KartaLojCreateBuilderTest {
         assertNull(d.waznaOd());
         assertNull(d.waznaDo());
         assertNull(d.posiadacz());
-        assertNull(d.nazwiskoImie());
+        assertEquals(NAZWISKO_IMIE, d.nazwiskoImie());
         assertNull(d.dataUrodzenia());
         assertNull(d.plec());
     }
@@ -114,6 +118,8 @@ class KartaLojCreateBuilderTest {
 
         // when
         KartaLojCreateBuilder d = KartaLojCreateBuilder.builder(KartaLojTestConstants.KOD)
+                .nazwiskoImie(NAZWISKO_IMIE)
+                .telefon(TELEFON)
                 .waznaOd(WAZNA_OD)
                 .dataUrodzenia(DATA_URODZENIA)
                 .build();

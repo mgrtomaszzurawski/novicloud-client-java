@@ -10,6 +10,7 @@ import io.github.mgrtomaszzurawski.novicloud.sdk.model.Jmiary;
 import io.github.mgrtomaszzurawski.novicloud.demo.runner.api.EndpointRunner;
 import io.github.mgrtomaszzurawski.novicloud.sdk.NoviCloudClient;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
+import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,9 +130,11 @@ public final class JmiaryRunner implements EndpointRunner {
 
         // 2. Verify via getById
         var fetched = api.getById(id);
-        LOG.info(LOG_CUD_GET_BY_ID, ENDPOINT, id, fetched.nazwa(), fetched.precyzja());
-        verifyField(ENDPOINT, FIELD_NAZWA, DEMO_NAZWA, fetched.nazwa());
-        verifyField(ENDPOINT, FIELD_PRECYZJA, DEMO_PRECYZJA, fetched.precyzja());
+        String fetchedNazwa = fetched.nazwa();
+        var fetchedPrecyzja = fetched.precyzja();
+        LOG.info(LOG_CUD_GET_BY_ID, ENDPOINT, id, fetchedNazwa, fetchedPrecyzja);
+        verifyField(ENDPOINT, FIELD_NAZWA, DEMO_NAZWA, fetchedNazwa);
+        verifyField(ENDPOINT, FIELD_PRECYZJA, DEMO_PRECYZJA, fetchedPrecyzja == null ? null : fetchedPrecyzja.code());
 
         // 3. Update all mutable fields
         api.update(JmiaryUpdateBuilder.builder(id)
@@ -140,9 +143,11 @@ public final class JmiaryRunner implements EndpointRunner {
 
         // 4. Verify update
         var updated = api.getById(id);
-        LOG.info(LOG_CUD_GET_AFTER_UPDATE, ENDPOINT, id, updated.nazwa(), updated.precyzja());
-        verifyField(ENDPOINT, FIELD_NAZWA, DEMO_NAZWA_UPDATED, updated.nazwa());
-        verifyField(ENDPOINT, FIELD_PRECYZJA, DEMO_PRECYZJA_UPDATED, updated.precyzja());
+        String updatedNazwa = updated.nazwa();
+        var updatedPrecyzja = updated.precyzja();
+        LOG.info(LOG_CUD_GET_AFTER_UPDATE, ENDPOINT, id, updatedNazwa, updatedPrecyzja);
+        verifyField(ENDPOINT, FIELD_NAZWA, DEMO_NAZWA_UPDATED, updatedNazwa);
+        verifyField(ENDPOINT, FIELD_PRECYZJA, DEMO_PRECYZJA_UPDATED, updatedPrecyzja == null ? null : updatedPrecyzja.code());
 
         // 5. Delete
         api.deleteById(id);
@@ -164,11 +169,11 @@ public final class JmiaryRunner implements EndpointRunner {
     }
 
     private void verifyDeleteBehavior(JmiaryClient api, Long id) {
-        var response = api.getById(id);
-        if (response == null) {
-            LOG.info(LOG_CUD_HARD_DELETE, ENDPOINT, id);
-        } else {
+        try {
+            api.getById(id);
             LOG.info(LOG_CUD_SOFT_DELETE, ENDPOINT, id);
+        } catch (NoviCloudNotFoundException expected) {
+            LOG.info(LOG_CUD_HARD_DELETE, ENDPOINT, id);
         }
     }
 

@@ -4,7 +4,11 @@
  * https://github.com/mgrtomaszzurawski/novicloud-client-java
  */
 /**
- * Lazy pagination support (PagedResult, LinkFetcher).
+ * Lazy pagination support: {@link io.github.mgrtomaszzurawski.novicloud.sdk.paging.PagedResult}.
+ *
+ * <p>Note: the internal {@code LinkFetcher} helper that follows pagination
+ * URLs lives in the non-exported {@code sdk.internal.paging} package as of
+ * 2.0.0; only {@code PagedResult} is part of the public surface here.
  *
  * @since 1.0.0
  */

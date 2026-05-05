@@ -11,6 +11,7 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseStawkiVatLi
 import io.github.mgrtomaszzurawski.novicloud.client.model.StawkaVatRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.stawkivat.StawkiVatClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.stawkivat.StawkiVatClientImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
@@ -26,7 +27,7 @@ import static io.github.mgrtomaszzurawski.novicloud.sdk.TestConstants.*;
 class StawkiVatClientTest {
 
     private StawkiVatClient client() {
-        return new StawkiVatClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+        return new StawkiVatClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
     }
 
     @Test
@@ -65,7 +66,7 @@ class StawkiVatClientTest {
         // when
         try (MockedConstruction<StawkiVatApi> mc = mockConstructionWithAnswer(StawkiVatApi.class,
                 inv -> response)) {
-            int result = new StawkiVatClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new StawkiVatClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_LIST_COUNT, result);
@@ -81,7 +82,7 @@ class StawkiVatClientTest {
         // when
         try (MockedConstruction<StawkiVatApi> mc = mockConstructionWithAnswer(StawkiVatApi.class,
                 inv -> response)) {
-            int result = new StawkiVatClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new StawkiVatClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(EXPECTED_ZERO, result);
@@ -98,7 +99,7 @@ class StawkiVatClientTest {
         // when
         try (MockedConstruction<StawkiVatApi> mc = mockConstructionWithAnswer(StawkiVatApi.class,
                 inv -> response)) {
-            int result = new StawkiVatClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new StawkiVatClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_REPORTED_SIZE, result);
@@ -111,7 +112,7 @@ class StawkiVatClientTest {
         // given
         try (MockedConstruction<StawkiVatApi> mc = mockConstructionWithAnswer(StawkiVatApi.class,
                 inv -> { throw apiServerError(); })) {
-            var client = new StawkiVatClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+            var client = new StawkiVatClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
 
             // when / then
             assertThrows(NoviCloudException.class, () -> client.count(null));

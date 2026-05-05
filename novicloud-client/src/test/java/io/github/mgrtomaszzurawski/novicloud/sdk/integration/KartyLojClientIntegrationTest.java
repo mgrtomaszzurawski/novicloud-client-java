@@ -117,6 +117,21 @@ class KartyLojClientIntegrationTest {
     }
 
     @Test
+    void getByKod_whenServerReturnsUnknownPlecEnum_returnsRecordWithNullPlec() {
+        // given - CF-04: unknown plec letter (e.g. "X") must not break deserialization
+        String json = "{\"status\":200,\"status_opis\":\"Ok\",\"dane\":{"
+                + "\"kod\":\"LOJ-001\",\"nazwisko_imie\":\"Test\",\"telefon\":\"123\",\"plec\":\"X\"}}";
+        stubFor(get(urlPathMatching(URL_BY_ID)).willReturn(okJson(json)));
+
+        // when
+        KartaLojalnosciowa kl = client.kartyLoj().getByKod(EXPECTED_KOD);
+
+        // then
+        assertNotNull(kl);
+        assertNull(kl.plec(), "unknown plec code must map to null, not throw");
+    }
+
+    @Test
     void create_whenServerAccepts_returnsCreatedId() {
         // given
         stubFor(post(urlPathMatching(URL_LIST))
@@ -181,6 +196,19 @@ class KartyLojClientIntegrationTest {
         NoviCloudNotFoundException ex = assertThrows(NoviCloudNotFoundException.class,
                 () -> resource.count(null));
         assertEquals(HTTP_NOT_FOUND, ex.getStatusCode());
+    }
+
+    @Test
+    void getByKod_whenServerReturns200WithNullDane_throwsNotFoundException() {
+        // given - F-01: getByKod must convert empty dane into NotFoundException
+        stubFor(get(urlPathMatching(URL_BY_ID))
+                .willReturn(okJson("{\"status\":200,\"status_opis\":\"Ok\",\"dane\":null}")));
+
+        // when / then
+        var resource = client.kartyLoj();
+        NoviCloudNotFoundException ex = assertThrows(NoviCloudNotFoundException.class,
+                () -> resource.getByKod(EXPECTED_KOD));
+        assertEquals(HTTP_OK, ex.getStatusCode());
     }
 
     @Test

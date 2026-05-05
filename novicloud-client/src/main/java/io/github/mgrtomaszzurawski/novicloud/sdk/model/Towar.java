@@ -5,8 +5,8 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.model;
 
-import io.github.mgrtomaszzurawski.novicloud.client.model.TowarRaw;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Immutable SDK model for the {@code towar} resource.
@@ -39,7 +39,10 @@ public record Towar(
         String jmId,
         String asortId,
         Typ typ,
-        PrzySprzedazy przySprzedazy
+        PrzySprzedazy przySprzedazy,
+        List<TowarKodDodatkowy> kodyDod,
+        List<TowarCenaWSklepie> cenyWSklepach,
+        List<TowarSkladnik> skladniki
 )
 {
 
@@ -85,41 +88,5 @@ public record Towar(
             }
             return null;
         }
-    }
-
-    /**
-     * Creates an immutable {@code Towar} from the generated {@code TowarRaw}.
-     *
-     * @param raw the generated model instance; must not be {@code null}
-     * @return a new immutable {@code Towar}
-     */
-    public static Towar from(TowarRaw raw) {
-        return new Towar(
-                raw.getId(),
-                raw.getNazwa(),
-                raw.getKod(),
-                raw.getCku(),
-                raw.getStawkaVat(),
-                raw.getAkcyzowy(),
-                raw.getCenaEw(),
-                raw.getCenaDet(),
-                raw.getCenaHurt(),
-                raw.getCenaNoc(),
-                raw.getCenaDod(),
-                raw.getGtu(),
-                raw.getPkwiu(),
-                raw.getMasaWl(),
-                raw.getAktywny(),
-                raw.getOpis1(),
-                raw.getOpis2(),
-                raw.getOpis3(),
-                raw.getOpis4(),
-                raw.getOpis5(),
-                raw.getOstZmiana(),
-                LinkUtils.extractId(raw.getJm()),
-                LinkUtils.extractId(raw.getAsort()),
-                raw.getTyp() != null ? Typ.fromCode(raw.getTyp().getValue()) : null,
-                raw.getPrzySprzedazy() != null ? PrzySprzedazy.fromCode(raw.getPrzySprzedazy().getValue()) : null
-        );
     }
 }

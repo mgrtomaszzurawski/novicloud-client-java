@@ -5,8 +5,6 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.model;
 
-import io.github.mgrtomaszzurawski.novicloud.client.model.FormaPlatnRaw;
-
 /**
  * Immutable SDK model for the {@code formaplatn} resource.
  *
@@ -37,21 +35,5 @@ public record FormaPlatn(Long id, String nazwa, Boolean reszta, Boolean aktywny,
             }
             return null;
         }
-    }
-
-    /**
-     * Creates an immutable {@code FormaPlatn} from the generated {@code FormaPlatnRaw}.
-     *
-     * @param raw the generated model instance; must not be {@code null}
-     * @return a new immutable {@code FormaPlatn}
-     */
-    public static FormaPlatn from(FormaPlatnRaw raw) {
-        return new FormaPlatn(
-                raw.getId(),
-                raw.getNazwa(),
-                raw.getReszta(),
-                raw.getAktywny(),
-                raw.getTyp() != null ? Typ.fromCode(raw.getTyp().getValue()) : null
-        );
     }
 }

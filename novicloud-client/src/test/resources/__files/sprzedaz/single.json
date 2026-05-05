@@ -19,6 +19,17 @@
     "sklep": {
       "id": "1",
       "link": "http://localhost/demo/sklepy/1"
-    }
+    },
+    "platnosci": [
+      {
+        "forma_platnosci": { "id": "5" },
+        "waluta": { "id": "1" },
+        "typ_formy_platnosci": 0,
+        "kod_waluty": "PLN",
+        "kurs": 1.0,
+        "wplata_waluta": 14.3,
+        "kwota": 14.3
+      }
+    ]
   }
 }

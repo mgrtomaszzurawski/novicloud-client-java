@@ -52,6 +52,9 @@ class SprzedazClientIntegrationTest {
     private static final String EXPECTED_SKLEP_ID = "1";
     private static final String EXPECTED_KASA_ID = "1";
     private static final String EXPECTED_KASJER_ID = "2";
+    private static final int EXPECTED_PLATNOSCI_COUNT = 1;
+    private static final String EXPECTED_PLATNOSC_KOD_WALUTY = "PLN";
+    private static final double EXPECTED_PLATNOSC_KWOTA = 14.3;
 
     private NoviCloudClient client;
 
@@ -130,6 +133,9 @@ class SprzedazClientIntegrationTest {
         assertEquals(EXPECTED_PODATEK, s.podatek());
         assertNotNull(s.towarId());
         assertNotNull(s.sklepId());
+        assertEquals(EXPECTED_PLATNOSCI_COUNT, s.platnosci().size());
+        assertEquals(EXPECTED_PLATNOSC_KOD_WALUTY, s.platnosci().get(FIRST_INDEX).kodWaluty());
+        assertEquals(EXPECTED_PLATNOSC_KWOTA, s.platnosci().get(FIRST_INDEX).kwota());
     }
 
     // -----------------------------------------------------------------------
@@ -160,6 +166,19 @@ class SprzedazClientIntegrationTest {
         NoviCloudNotFoundException ex = assertThrows(NoviCloudNotFoundException.class,
                 () -> resource.count(null));
         assertEquals(HTTP_NOT_FOUND, ex.getStatusCode());
+    }
+
+    @Test
+    void getById_whenServerReturns200WithNullDane_throwsNotFoundException() {
+        // given - read-only endpoint may return HTTP 200 with dane=null when no record matches
+        stubFor(get(urlPathMatching(URL_BY_ID))
+                .willReturn(okJson("{\"status\":200,\"status_opis\":\"Ok\",\"dane\":null}")));
+
+        // when / then
+        var resource = client.sprzedaz();
+        NoviCloudNotFoundException ex = assertThrows(NoviCloudNotFoundException.class,
+                () -> resource.getById(EXPECTED_ID));
+        assertEquals(HTTP_OK, ex.getStatusCode());
     }
 
     @Test

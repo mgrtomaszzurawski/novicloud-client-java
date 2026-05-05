@@ -40,7 +40,7 @@ class NoviCloudExceptionTest {
         ApiException cause = apiEx(HTTP_UNAUTHORIZED);
 
         // when
-        NoviCloudException ex = NoviCloudException.of(MSG, cause);
+        NoviCloudException ex = NoviCloudException.of(MSG, cause, cause.getCode(), cause.getResponseHeaders(), cause.getResponseBody());
 
         // then
         assertInstanceOf(NoviCloudAuthException.class, ex);
@@ -53,7 +53,7 @@ class NoviCloudExceptionTest {
         ApiException cause = apiEx(HTTP_FORBIDDEN);
 
         // when
-        NoviCloudException ex = NoviCloudException.of(MSG, cause);
+        NoviCloudException ex = NoviCloudException.of(MSG, cause, cause.getCode(), cause.getResponseHeaders(), cause.getResponseBody());
 
         // then
         assertInstanceOf(NoviCloudAuthException.class, ex);
@@ -66,7 +66,7 @@ class NoviCloudExceptionTest {
         ApiException cause = apiEx(HTTP_NOT_FOUND);
 
         // when
-        NoviCloudException ex = NoviCloudException.of(MSG, cause);
+        NoviCloudException ex = NoviCloudException.of(MSG, cause, cause.getCode(), cause.getResponseHeaders(), cause.getResponseBody());
 
         // then
         assertInstanceOf(NoviCloudNotFoundException.class, ex);
@@ -79,7 +79,7 @@ class NoviCloudExceptionTest {
         ApiException cause = apiEx(HTTP_GONE);
 
         // when
-        NoviCloudException ex = NoviCloudException.of(MSG, cause);
+        NoviCloudException ex = NoviCloudException.of(MSG, cause, cause.getCode(), cause.getResponseHeaders(), cause.getResponseBody());
 
         // then
         assertInstanceOf(NoviCloudNotFoundException.class, ex);
@@ -92,7 +92,7 @@ class NoviCloudExceptionTest {
         ApiException cause = apiEx(HTTP_RATE_LIMITED);
 
         // when
-        NoviCloudException ex = NoviCloudException.of(MSG, cause);
+        NoviCloudException ex = NoviCloudException.of(MSG, cause, cause.getCode(), cause.getResponseHeaders(), cause.getResponseBody());
 
         // then
         assertInstanceOf(NoviCloudRateLimitException.class, ex);
@@ -107,7 +107,7 @@ class NoviCloudExceptionTest {
         ApiException cause = apiEx(HTTP_RATE_LIMITED, headers);
 
         // when
-        NoviCloudException ex = NoviCloudException.of(MSG, cause);
+        NoviCloudException ex = NoviCloudException.of(MSG, cause, cause.getCode(), cause.getResponseHeaders(), cause.getResponseBody());
 
         // then
         assertInstanceOf(NoviCloudRateLimitException.class, ex);
@@ -121,7 +121,7 @@ class NoviCloudExceptionTest {
 
         // when
         NoviCloudRateLimitException ex =
-                (NoviCloudRateLimitException) NoviCloudException.of(MSG, cause);
+                (NoviCloudRateLimitException) NoviCloudException.of(MSG, cause, cause.getCode(), cause.getResponseHeaders(), cause.getResponseBody());
 
         // then
         assertEquals(EXPECTED_RETRY_AFTER_ZERO, ex.getRetryAfterSeconds());
@@ -136,7 +136,7 @@ class NoviCloudExceptionTest {
 
         // when
         NoviCloudRateLimitException ex =
-                (NoviCloudRateLimitException) NoviCloudException.of(MSG, cause);
+                (NoviCloudRateLimitException) NoviCloudException.of(MSG, cause, cause.getCode(), cause.getResponseHeaders(), cause.getResponseBody());
 
         // then
         assertEquals(EXPECTED_RETRY_AFTER_ZERO, ex.getRetryAfterSeconds());
@@ -148,7 +148,7 @@ class NoviCloudExceptionTest {
         ApiException cause = apiEx(HTTP_SERVER_ERROR);
 
         // when
-        NoviCloudException ex = NoviCloudException.of(MSG, cause);
+        NoviCloudException ex = NoviCloudException.of(MSG, cause, cause.getCode(), cause.getResponseHeaders(), cause.getResponseBody());
 
         // then
         assertInstanceOf(NoviCloudServerException.class, ex);
@@ -161,7 +161,7 @@ class NoviCloudExceptionTest {
         ApiException cause = apiEx(HTTP_SERVICE_UNAVAILABLE);
 
         // when
-        NoviCloudException ex = NoviCloudException.of(MSG, cause);
+        NoviCloudException ex = NoviCloudException.of(MSG, cause, cause.getCode(), cause.getResponseHeaders(), cause.getResponseBody());
 
         // then
         assertInstanceOf(NoviCloudServerException.class, ex);
@@ -174,7 +174,7 @@ class NoviCloudExceptionTest {
         ApiException cause = apiEx(HTTP_UNPROCESSABLE);
 
         // when
-        NoviCloudException ex = NoviCloudException.of(MSG, cause);
+        NoviCloudException ex = NoviCloudException.of(MSG, cause, cause.getCode(), cause.getResponseHeaders(), cause.getResponseBody());
 
         // then
         assertEquals(NoviCloudException.class, ex.getClass());
@@ -182,15 +182,87 @@ class NoviCloudExceptionTest {
     }
 
     @Test
-    void of_whenCode0NetworkError_returnsBaseException() {
-        // given
+    void of_whenCode0WithoutTransportCause_returnsBaseException() {
+        // given - code=0 alone (no IOException/InterruptedException cause) is not network
         ApiException cause = apiEx(HTTP_NETWORK_ERROR);
 
         // when
-        NoviCloudException ex = NoviCloudException.of(MSG, cause);
+        NoviCloudException ex = NoviCloudException.of(MSG, cause, cause.getCode(), cause.getResponseHeaders(), cause.getResponseBody());
 
         // then
         assertEquals(NoviCloudException.class, ex.getClass());
         assertEquals(HTTP_NETWORK_ERROR, ex.getStatusCode());
+    }
+
+    @Test
+    void of_whenCode0WithIOExceptionCause_returnsNetworkException() {
+        // given - F-02: transport failure path. The internal mapper in RetryHandler
+        // unwraps ApiException's cause to surface the original IOException to of(...).
+        java.io.IOException io = new java.io.IOException("connection reset");
+
+        // when
+        NoviCloudException ex = NoviCloudException.of(MSG, io, HTTP_NETWORK_ERROR, null, null);
+
+        // then
+        assertInstanceOf(NoviCloudNetworkException.class, ex);
+        assertEquals(HTTP_NETWORK_ERROR, ex.getStatusCode());
+        assertEquals(io, ex.getCause());
+    }
+
+    @Test
+    void of_whenCode402_returnsAccessException() {
+        // given - F-04: REST API option not subscribed
+        ApiException cause = apiEx(HTTP_PAYMENT_REQUIRED);
+
+        // when
+        NoviCloudException ex = NoviCloudException.of(MSG, cause, cause.getCode(), cause.getResponseHeaders(), cause.getResponseBody());
+
+        // then
+        assertInstanceOf(NoviCloudAccessException.class, ex);
+        assertEquals(HTTP_PAYMENT_REQUIRED, ex.getStatusCode());
+    }
+
+    @Test
+    void getErrorDetails_when400WithBothLists_returnsParsed() {
+        // given - F-07: typed access to 400 validation envelope
+        String body = "{\"status\":400,\"status_opis\":\"Bad request\","
+                + "\"dane\":{\"par_niewlasciwe\":[\"foo\",\"bar\"],\"par_bledna_wart\":[\"baz\"]}}";
+        NoviCloudException ex = new NoviCloudException(MSG, null, HTTP_BAD_REQUEST, body);
+
+        // when
+        java.util.Optional<NoviCloudErrorDetails> details = ex.getErrorDetails();
+
+        // then
+        assertTrue(details.isPresent());
+        assertEquals(java.util.List.of("foo", "bar"), details.get().parNiewlasciwe());
+        assertEquals(java.util.List.of("baz"), details.get().parBlednaWart());
+    }
+
+    @Test
+    void getErrorDetails_whenBodyMissing_returnsEmpty() {
+        // given
+        NoviCloudException ex = new NoviCloudException(MSG, null, HTTP_BAD_REQUEST, null);
+
+        // when / then
+        assertTrue(ex.getErrorDetails().isEmpty());
+    }
+
+    @Test
+    void getErrorDetails_whenBodyNotJson_returnsEmpty() {
+        // given
+        NoviCloudException ex = new NoviCloudException(MSG, null, HTTP_BAD_REQUEST, "not json");
+
+        // when / then
+        assertTrue(ex.getErrorDetails().isEmpty());
+    }
+
+    @Test
+    void getErrorDetails_whenDaneHasNoErrorFields_returnsEmpty() {
+        // given - dane is an object but neither par_niewlasciwe nor par_bledna_wart present
+        String body = "{\"status\":400,\"dane\":{\"id\":1}}";
+        NoviCloudException ex = new NoviCloudException(MSG, null, HTTP_BAD_REQUEST, body);
+
+        // when / then
+        assertTrue(ex.getErrorDetails().isEmpty());
     }
 }

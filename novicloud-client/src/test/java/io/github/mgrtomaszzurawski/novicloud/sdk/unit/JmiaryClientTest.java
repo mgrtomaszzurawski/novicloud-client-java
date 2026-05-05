@@ -11,6 +11,7 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseJmiaryListR
 import io.github.mgrtomaszzurawski.novicloud.client.model.JmiaryRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.jmiary.JmiaryClient;
+import io.github.mgrtomaszzurawski.novicloud.sdk.internal.resources.jmiary.JmiaryClientImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
@@ -26,7 +27,7 @@ import static io.github.mgrtomaszzurawski.novicloud.sdk.TestConstants.*;
 class JmiaryClientTest {
 
     private JmiaryClient client() {
-        return new JmiaryClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+        return new JmiaryClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
     }
 
     @Test
@@ -65,7 +66,7 @@ class JmiaryClientTest {
         // when
         try (MockedConstruction<JmiaryApi> mc = mockConstructionWithAnswer(JmiaryApi.class,
                 inv -> response)) {
-            int result = new JmiaryClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new JmiaryClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_LIST_COUNT, result);
@@ -81,7 +82,7 @@ class JmiaryClientTest {
         // when
         try (MockedConstruction<JmiaryApi> mc = mockConstructionWithAnswer(JmiaryApi.class,
                 inv -> response)) {
-            int result = new JmiaryClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new JmiaryClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(EXPECTED_ZERO, result);
@@ -98,7 +99,7 @@ class JmiaryClientTest {
         // when
         try (MockedConstruction<JmiaryApi> mc = mockConstructionWithAnswer(JmiaryApi.class,
                 inv -> response)) {
-            int result = new JmiaryClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
+            int result = new JmiaryClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY).count(null);
 
             // then
             assertEquals(MOCK_REPORTED_SIZE, result);
@@ -111,7 +112,7 @@ class JmiaryClientTest {
         // given
         try (MockedConstruction<JmiaryApi> mc = mockConstructionWithAnswer(JmiaryApi.class,
                 inv -> { throw apiServerError(); })) {
-            var client = new JmiaryClient(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
+            var client = new JmiaryClientImpl(new ApiClient(), TEST_ACCOUNT, NO_RETRY);
 
             // when / then
             assertThrows(NoviCloudException.class, () -> client.count(null));

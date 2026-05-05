@@ -6,7 +6,7 @@
 
     <groupId>io.github.mgrtomaszzurawski</groupId>
     <artifactId>novicloud-root</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <packaging>pom</packaging>
     <name>Java SDK for NoviCloud API</name>
     <description>Unofficial Java SDK for the NoviCloud REST API</description>
@@ -43,7 +43,7 @@
         <connection>scm:git:https://github.com/mgrtomaszzurawski/novicloud-client-java.git</connection>
         <developerConnection>scm:git:https://github.com/mgrtomaszzurawski/novicloud-client-java.git</developerConnection>
         <url>https://github.com/mgrtomaszzurawski/novicloud-client-java</url>
-        <tag>v1.0.0</tag>
+        <tag>v2.0.0</tag>
     </scm>
 
     <build>

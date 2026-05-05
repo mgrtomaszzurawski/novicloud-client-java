@@ -5,8 +5,6 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.model;
 
-import io.github.mgrtomaszzurawski.novicloud.client.model.StawkaVatRaw;
-
 /**
  * Immutable SDK model for the {@code stawkavat} resource.
  *
@@ -37,19 +35,5 @@ public record StawkaVat(Integer id, String opis, Etykieta etykieta) {
             }
             return null;
         }
-    }
-
-    /**
-     * Creates an immutable {@code StawkaVat} from the generated {@code StawkaVatRaw}.
-     *
-     * @param raw the generated model instance; must not be {@code null}
-     * @return a new immutable {@code StawkaVat}
-     */
-    public static StawkaVat from(StawkaVatRaw raw) {
-        return new StawkaVat(
-                raw.getId(),
-                raw.getOpis(),
-                raw.getEtykieta() != null ? Etykieta.fromCode(raw.getEtykieta().getValue()) : null
-        );
     }
 }

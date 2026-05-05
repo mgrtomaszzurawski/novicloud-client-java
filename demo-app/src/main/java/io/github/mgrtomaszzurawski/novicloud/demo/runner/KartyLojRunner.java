@@ -134,8 +134,11 @@ public final class KartyLojRunner implements EndpointRunner, CreatesTestRecord {
             return;
         }
         var fetched = api.getByKod(kod);
-        LOG.info(LOG_UD_GET, ENDPOINT, kod, fetched.nazwiskoImie(), fetched.email(), fetched.uniewazniono());
-        if (fetched.uniewazniono() != null) {
+        String fetchedHolder = fetched.nazwiskoImie();
+        String fetchedEmail = fetched.email();
+        var fetchedInvalidated = fetched.uniewazniono();
+        LOG.info(LOG_UD_GET, ENDPOINT, kod, fetchedHolder, fetchedEmail, fetchedInvalidated);
+        if (fetchedInvalidated != null) {
             api.update(KartaLojUpdateBuilder.builder(kod).uniewazniono(null).build());
             LOG.info(LOG_UD_CLEARED, ENDPOINT, kod);
         }

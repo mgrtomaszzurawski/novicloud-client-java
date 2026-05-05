@@ -5,6 +5,8 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.resources.towary;
 
+import java.util.Objects;
+
 /**
  * Immutable data transfer object for creating a new towar record. Required: {@code kod}, {@code nazwa}.
  *
@@ -180,7 +182,10 @@ public final class TowarCreateBuilder {
         private String opis4;
         private String opis5;
 
-        private Builder(String kod, String nazwa) { this.kod = kod; this.nazwa = nazwa; }
+        private Builder(String kod, String nazwa) {
+            this.kod = Objects.requireNonNull(kod, "kod must not be null");
+            this.nazwa = Objects.requireNonNull(nazwa, "nazwa must not be null");
+        }
 
         /** Sets Record ID. @return this builder */
         public Builder id(Long id) { this.id = id; return this; }

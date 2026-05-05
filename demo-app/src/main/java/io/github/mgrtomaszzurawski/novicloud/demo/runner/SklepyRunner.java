@@ -130,8 +130,11 @@ public final class SklepyRunner implements EndpointRunner, CreatesTestRecord {
         }
         long id = Long.parseLong(savedId);
         var fetched = api.getById(id);
-        LOG.info(LOG_UD_GET, ENDPOINT, id, fetched.nazwa(), fetched.numer(), fetched.aktywny());
-        if (fetched.aktywny() != null && !fetched.aktywny()) {
+        String fetchedNazwa = fetched.nazwa();
+        Integer fetchedNumer = fetched.numer();
+        Boolean fetchedAktywny = fetched.aktywny();
+        LOG.info(LOG_UD_GET, ENDPOINT, id, fetchedNazwa, fetchedNumer, fetchedAktywny);
+        if (fetchedAktywny != null && !fetchedAktywny) {
             api.update(SklepUpdateBuilder.builder(id).aktywny(true).build());
             LOG.info(LOG_UD_REACTIVATED, ENDPOINT, id);
         }
