@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github.mgrtomaszzurawski</groupId>
+    <artifactId>novicloud-client</artifactId>
+    <version>1.0.1</version>
+    <packaging>pom</packaging>
+
+    <name>Java Client for NoviCloud API (relocation to 2.0.0)</name>
+    <description>This artifact has been relocated to version 2.0.0. The 1.0.0 release contained
+        unresolved bugs (NPE on missing records, no HTTP 402 mapping, public API leakage of
+        generated transport types) that were fixed in the 2.0.0 redesign. Please update to 2.0.0.
+        See CHANGELOG and ADR-059 in the project repository.</description>
+    <url>https://github.com/mgrtomaszzurawski/novicloud-client-java</url>
+
+    <licenses>
+        <license>
+            <name>AGPL-3.0-only</name>
+            <url>https://www.gnu.org/licenses/agpl-3.0.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Tomasz Zurawski</name>
+            <email>mgrtomaszzurawski@gmail.com</email>
+            <url>https://github.com/mgrtomaszzurawski</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/mgrtomaszzurawski/novicloud-client-java.git</connection>
+        <developerConnection>scm:git:git@github.com:mgrtomaszzurawski/novicloud-client-java.git</developerConnection>
+        <url>https://github.com/mgrtomaszzurawski/novicloud-client-java</url>
+        <tag>v1.0.1</tag>
+    </scm>
+
+    <distributionManagement>
+        <relocation>
+            <groupId>io.github.mgrtomaszzurawski</groupId>
+            <artifactId>novicloud-client</artifactId>
+            <version>2.0.0</version>
+            <message>1.0.0 contained unresolved bugs; update to 2.0.0. See CHANGELOG and ADR-059.</message>
+        </relocation>
+    </distributionManagement>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <gpg.keyname>3D4D5089B6567EAF</gpg.keyname>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.4</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals><goal>sign</goal></goals>
+                                <configuration>
+                                    <keyname>${gpg.keyname}</keyname>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.7.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>false</autoPublish>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
