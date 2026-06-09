@@ -5,8 +5,11 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.builder.towary;
 
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarKodDodatkowy;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.towary.TowarUpdateBuilder;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,6 +53,29 @@ class TowarUpdateBuilderTest {
         assertNull(d.nazwa());
         assertNull(d.stawkaVat());
         assertNull(d.aktywny());
+        assertNull(d.kodyDod());
+        assertNull(d.cenyWSklepach());
+        assertNull(d.skladniki());
+    }
+
+    @Test
+    void build_whenKodyDodSet_roundTripsThroughToBuilder() {
+        // given
+        TowarUpdateBuilder original = TowarUpdateBuilder.builder(ID_42)
+                .kodyDod(List.of(new TowarKodDodatkowy("5901234123457", 6.0, 2)))
+                .build();
+
+        // when
+        TowarUpdateBuilder copy = original.toBuilder().build();
+
+        // then
+        assertEquals(1, copy.kodyDod().size());
+        assertEquals("5901234123457", copy.kodyDod().get(0).kod());
+        assertEquals(original.kodyDod(), copy.kodyDod());
+        // and the accessor returns an unmodifiable copy
+        List<TowarKodDodatkowy> returned = copy.kodyDod();
+        assertThrows(UnsupportedOperationException.class,
+                () -> returned.add(new TowarKodDodatkowy("0", 1.0, 1)));
     }
 
     @Test

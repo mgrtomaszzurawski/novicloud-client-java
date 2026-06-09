@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-06-10
+
+### Added
+
+- **Write support for `Towar` nested collections.** `TowarCreateBuilder` and
+  `TowarUpdateBuilder` now accept `kodyDod(List<TowarKodDodatkowy>)`,
+  `cenyWSklepach(List<TowarCenaWSklepie>)` and `skladniki(List<TowarSkladnik>)`.
+  These were exposed read-only on the `Towar` record in 2.0.0 (F-12) but could
+  not be sent on create/update; the gap is now closed. The lists serialize to
+  the `kody_dod`, `ceny_w_sklepach` and `skladniki` request-body fields. Lists
+  are defensively copied; accessors return unmodifiable views.
+
+### Fixed
+
+- The Maven Central jar now bundles `META-INF/LICENSE` (AGPL-3.0 section 4
+  requires every conveyed copy to carry the license). The 2.0.0 jar shipped
+  without it; this is corrective for the next release.
+
 ## [2.0.0] - 2026-05-03
 
 This release was originally planned as `1.1.0` (Codex review fixes plus internal-leak

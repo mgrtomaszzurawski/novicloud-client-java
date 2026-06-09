@@ -5,6 +5,11 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.resources.towary;
 
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarCenaWSklepie;
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarKodDodatkowy;
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarSkladnik;
+
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -40,6 +45,9 @@ public final class TowarCreateBuilder {
     private final String opis3;
     private final String opis4;
     private final String opis5;
+    private final List<TowarKodDodatkowy> kodyDod;
+    private final List<TowarCenaWSklepie> cenyWSklepach;
+    private final List<TowarSkladnik> skladniki;
 
     private TowarCreateBuilder(Builder builder) {
         this.id = builder.id;
@@ -66,6 +74,9 @@ public final class TowarCreateBuilder {
         this.opis3 = builder.opis3;
         this.opis4 = builder.opis4;
         this.opis5 = builder.opis5;
+        this.kodyDod = builder.kodyDod == null ? null : List.copyOf(builder.kodyDod);
+        this.cenyWSklepach = builder.cenyWSklepach == null ? null : List.copyOf(builder.cenyWSklepach);
+        this.skladniki = builder.skladniki == null ? null : List.copyOf(builder.skladniki);
     }
 
     public static Builder builder(String kod, String nazwa) {
@@ -120,6 +131,12 @@ public final class TowarCreateBuilder {
     public String opis4() { return opis4; }
     /** Supplementary description field 5. */
     public String opis5() { return opis5; }
+    /** Additional barcodes ({@code kody_dod}); {@code null} if not set. */
+    public List<TowarKodDodatkowy> kodyDod() { return kodyDod == null ? null : List.copyOf(kodyDod); }
+    /** Per-store price overrides ({@code ceny_w_sklepach}); {@code null} if not set. */
+    public List<TowarCenaWSklepie> cenyWSklepach() { return cenyWSklepach == null ? null : List.copyOf(cenyWSklepach); }
+    /** Bundle components for product type 5 ({@code skladniki}); {@code null} if not set. */
+    public List<TowarSkladnik> skladniki() { return skladniki == null ? null : List.copyOf(skladniki); }
 
     /**
      * Creates a new {@link Builder} pre-populated with the values from this instance.
@@ -150,6 +167,9 @@ public final class TowarCreateBuilder {
         b.opis3 = this.opis3;
         b.opis4 = this.opis4;
         b.opis5 = this.opis5;
+        b.kodyDod = this.kodyDod;
+        b.cenyWSklepach = this.cenyWSklepach;
+        b.skladniki = this.skladniki;
         return b;
     }
 
@@ -181,6 +201,9 @@ public final class TowarCreateBuilder {
         private String opis3;
         private String opis4;
         private String opis5;
+        private List<TowarKodDodatkowy> kodyDod;
+        private List<TowarCenaWSklepie> cenyWSklepach;
+        private List<TowarSkladnik> skladniki;
 
         private Builder(String kod, String nazwa) {
             this.kod = Objects.requireNonNull(kod, "kod must not be null");
@@ -235,6 +258,12 @@ public final class TowarCreateBuilder {
         public Builder opis4(String opis4) { this.opis4 = opis4; return this; }
         /** Sets Supplementary description field 5. @return this builder */
         public Builder opis5(String opis5) { this.opis5 = opis5; return this; }
+        /** Sets additional barcodes ({@code kody_dod}). @return this builder */
+        public Builder kodyDod(List<TowarKodDodatkowy> kodyDod) { this.kodyDod = kodyDod == null ? null : List.copyOf(kodyDod); return this; }
+        /** Sets per-store price overrides ({@code ceny_w_sklepach}). @return this builder */
+        public Builder cenyWSklepach(List<TowarCenaWSklepie> cenyWSklepach) { this.cenyWSklepach = cenyWSklepach == null ? null : List.copyOf(cenyWSklepach); return this; }
+        /** Sets bundle components for product type 5 ({@code skladniki}). @return this builder */
+        public Builder skladniki(List<TowarSkladnik> skladniki) { this.skladniki = skladniki == null ? null : List.copyOf(skladniki); return this; }
 
         /**
          * Builds the {@link TowarCreateBuilder}.

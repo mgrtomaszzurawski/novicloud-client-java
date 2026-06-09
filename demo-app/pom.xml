@@ -6,7 +6,7 @@
 
     <groupId>io.github.mgrtomaszzurawski</groupId>
     <artifactId>demo-app</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>io.github.mgrtomaszzurawski</groupId>
             <artifactId>novicloud-client</artifactId>
-            <version>2.0.0</version>
+            <version>2.1.0</version>
         </dependency>
 
         <dependency>
