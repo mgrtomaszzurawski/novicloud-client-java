@@ -5,8 +5,15 @@
  */
 package io.github.mgrtomaszzurawski.novicloud.sdk.builder.towary;
 
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarCenaWSklepie;
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarKodDodatkowy;
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarSkladnik;
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarSkladnikTowar;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.towary.TowarCreateBuilder;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,6 +51,16 @@ class TowarCreateBuilderTest {
     private static final String TB_KOD = "test-kod";
     private static final String TB_NAZWA = "test-nazwa";
 
+    private static final String BARCODE = "5901234123457";
+    private static final double ILE_W_OPAK = 6.0;
+    private static final int POZIOM_CEN = 2;
+    private static final String SKLEP_ID = "3";
+    private static final double SKLEP_CENA_DET = 14.50;
+    private static final String SKLADNIK_NAZWA = "Sos";
+    private static final double SKLADNIK_CENA = 2.0;
+    private static final String SKLADNIK_TOWAR_ID = "42";
+    private static final double SKLADNIK_TOWAR_ILOSC = 1.0;
+
 
     @Test
     void build_whenRequiredOnly_optionalsAreNull() {
@@ -56,6 +73,58 @@ class TowarCreateBuilderTest {
         assertNull(d.id());
         assertNull(d.stawkaVat());
         assertNull(d.aktywny());
+        assertNull(d.kodyDod());
+        assertNull(d.cenyWSklepach());
+        assertNull(d.skladniki());
+    }
+
+    @Test
+    void build_whenNestedListsSet_valuesPreserved() {
+        // given / when
+        TowarCreateBuilder d = TowarCreateBuilder.builder(KOD_001, NAZWA_TOWAR_TESTOWY)
+                .kodyDod(List.of(new TowarKodDodatkowy(BARCODE, ILE_W_OPAK, POZIOM_CEN)))
+                .cenyWSklepach(List.of(new TowarCenaWSklepie(
+                        SKLEP_ID, null, SKLEP_CENA_DET, null, null, null, null)))
+                .skladniki(List.of(new TowarSkladnik(
+                        SKLADNIK_NAZWA, SKLADNIK_CENA, true, false, false,
+                        List.of(new TowarSkladnikTowar(
+                                SKLADNIK_TOWAR_ID, SKLADNIK_TOWAR_ILOSC, true, null, true)))))
+                .build();
+
+        // then
+        assertEquals(1, d.kodyDod().size());
+        assertEquals(BARCODE, d.kodyDod().get(0).kod());
+        assertEquals(ILE_W_OPAK, d.kodyDod().get(0).ileWOpak(), DELTA);
+        assertEquals(POZIOM_CEN, d.kodyDod().get(0).poziomCen());
+
+        assertEquals(1, d.cenyWSklepach().size());
+        assertEquals(SKLEP_ID, d.cenyWSklepach().get(0).sklepId());
+        assertEquals(SKLEP_CENA_DET, d.cenyWSklepach().get(0).cenaDet(), DELTA);
+
+        assertEquals(1, d.skladniki().size());
+        assertEquals(SKLADNIK_NAZWA, d.skladniki().get(0).nazwa());
+        assertEquals(1, d.skladniki().get(0).towary().size());
+        assertEquals(SKLADNIK_TOWAR_ID, d.skladniki().get(0).towary().get(0).towarId());
+    }
+
+    @Test
+    void kodyDod_accessor_returnsDefensiveCopy() {
+        // given
+        List<TowarKodDodatkowy> source = new ArrayList<>();
+        source.add(new TowarKodDodatkowy(BARCODE, ILE_W_OPAK, POZIOM_CEN));
+        TowarCreateBuilder d = TowarCreateBuilder.builder(KOD_001, NAZWA_TOWAR_TESTOWY)
+                .kodyDod(source)
+                .build();
+
+        // when - mutating the source list must not affect the built DTO
+        source.clear();
+
+        // then
+        assertEquals(1, d.kodyDod().size());
+        // and the returned list is unmodifiable
+        List<TowarKodDodatkowy> returned = d.kodyDod();
+        assertThrows(UnsupportedOperationException.class,
+                () -> returned.add(new TowarKodDodatkowy(BARCODE, ILE_W_OPAK, POZIOM_CEN)));
     }
 
     @Test
@@ -107,6 +176,11 @@ class TowarCreateBuilderTest {
                 .opis3(TB_OPIS3)
                 .opis4(TB_OPIS4)
                 .opis5(TB_OPIS5)
+                .kodyDod(List.of(new TowarKodDodatkowy(BARCODE, ILE_W_OPAK, POZIOM_CEN)))
+                .cenyWSklepach(List.of(new TowarCenaWSklepie(
+                        SKLEP_ID, null, SKLEP_CENA_DET, null, null, null, null)))
+                .skladniki(List.of(new TowarSkladnik(
+                        SKLADNIK_NAZWA, SKLADNIK_CENA, true, false, false, List.of())))
                 .build();
 
         // when
@@ -137,5 +211,8 @@ class TowarCreateBuilderTest {
         assertEquals(original.opis3(), copy.opis3());
         assertEquals(original.opis4(), copy.opis4());
         assertEquals(original.opis5(), copy.opis5());
+        assertEquals(original.kodyDod(), copy.kodyDod());
+        assertEquals(original.cenyWSklepach(), copy.cenyWSklepach());
+        assertEquals(original.skladniki(), copy.skladniki());
     }
 }

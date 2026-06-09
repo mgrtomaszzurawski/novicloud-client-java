@@ -16,6 +16,10 @@ import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudNotFoundException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudRateLimitException;
 import io.github.mgrtomaszzurawski.novicloud.sdk.exception.NoviCloudServerException;
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarCenaWSklepie;
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarKodDodatkowy;
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarSkladnik;
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarSkladnikTowar;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.towary.TowarCreateBuilder;
 import io.github.mgrtomaszzurawski.novicloud.sdk.resources.towary.TowarUpdateBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -215,6 +219,35 @@ class TowaryClientIntegrationTest {
         // then
         assertEquals(EXPECTED_CREATED_ID, id);
         verify(SINGLE_REQUEST, postRequestedFor(urlPathMatching(URL_LIST)));
+    }
+
+    @Test
+    void create_whenNestedListsSet_sendsThemInRequestBody() {
+        // given
+        stubFor(post(urlPathMatching(URL_LIST))
+                .willReturn(aResponse().withStatus(HTTP_CREATED)
+                        .withHeader(CONTENT_TYPE_HEADER, APPLICATION_JSON)
+                        .withBody(TestClients.CREATED_JSON)));
+
+        // when
+        client.towary().create(
+                TowarCreateBuilder.builder(CREATE_KOD, CREATE_NAZWA)
+                        .kodyDod(List.of(new TowarKodDodatkowy("5901234123457", 6.0, 2)))
+                        .cenyWSklepach(List.of(new TowarCenaWSklepie(
+                                "3", null, 14.50, null, null, null, null)))
+                        .skladniki(List.of(new TowarSkladnik(
+                                "Sos", 2.0, true, false, false,
+                                List.of(new TowarSkladnikTowar("42", 1.0, true, null, true)))))
+                        .build());
+
+        // then - the nested lists must appear in the POST body with snake_case keys
+        verify(SINGLE_REQUEST, postRequestedFor(urlPathMatching(URL_LIST))
+                .withRequestBody(matchingJsonPath("$.kody_dod[0].kod", equalTo("5901234123457")))
+                .withRequestBody(matchingJsonPath("$.kody_dod[0].poziom_cen", equalTo("2")))
+                .withRequestBody(matchingJsonPath("$.ceny_w_sklepach[0].cena_det", equalTo("14.5")))
+                .withRequestBody(matchingJsonPath("$.ceny_w_sklepach[0].sklep.id", equalTo("3")))
+                .withRequestBody(matchingJsonPath("$.skladniki[0].nazwa", equalTo("Sos")))
+                .withRequestBody(matchingJsonPath("$.skladniki[0].towary[0].towar.id", equalTo("42"))));
     }
 
     @Test

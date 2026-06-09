@@ -19,7 +19,15 @@ import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseCreatedRaw;
 import io.github.mgrtomaszzurawski.novicloud.client.model.ApiResponseTowaryListRaw;
 import io.github.mgrtomaszzurawski.novicloud.client.model.LinkRaw;
 import io.github.mgrtomaszzurawski.novicloud.client.model.TowarRaw;
+import io.github.mgrtomaszzurawski.novicloud.client.model.TowarCenaWSklepieRaw;
+import io.github.mgrtomaszzurawski.novicloud.client.model.TowarKodDodatkowyRaw;
+import io.github.mgrtomaszzurawski.novicloud.client.model.TowarSkladnikRaw;
+import io.github.mgrtomaszzurawski.novicloud.client.model.TowarSkladnikTowarRaw;
 import io.github.mgrtomaszzurawski.novicloud.sdk.model.Towar;
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarCenaWSklepie;
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarKodDodatkowy;
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarSkladnik;
+import io.github.mgrtomaszzurawski.novicloud.sdk.model.TowarSkladnikTowar;
 import io.github.mgrtomaszzurawski.novicloud.sdk.internal.mapper.RawMappers;
 import io.github.mgrtomaszzurawski.novicloud.sdk.internal.paging.LinkFetcher;
 import io.github.mgrtomaszzurawski.novicloud.sdk.paging.PagedResult;
@@ -250,6 +258,8 @@ public final class TowaryClientImpl implements TowaryClient {
             towar.setAsort(asort);
         }
 
+        applyNestedLists(towar, builder.kodyDod(), builder.cenyWSklepach(), builder.skladniki());
+
         return towar;
     }
 
@@ -295,7 +305,76 @@ public final class TowaryClientImpl implements TowaryClient {
             towar.setAsort(asort);
         }
 
+        applyNestedLists(towar, builder.kodyDod(), builder.cenyWSklepach(), builder.skladniki());
+
         return towar;
+    }
+
+    private static void applyNestedLists(TowarRaw towar, List<TowarKodDodatkowy> kodyDod,
+            List<TowarCenaWSklepie> cenyWSklepach, List<TowarSkladnik> skladniki)
+    {
+        if (kodyDod != null) {
+            towar.setKodyDod(kodyDod.stream().map(TowaryClientImpl::toKodDodatkowyRaw).toList());
+        }
+        if (cenyWSklepach != null) {
+            towar.setCenyWSklepach(cenyWSklepach.stream().map(TowaryClientImpl::toCenaWSklepieRaw).toList());
+        }
+        if (skladniki != null) {
+            towar.setSkladniki(skladniki.stream().map(TowaryClientImpl::toSkladnikRaw).toList());
+        }
+    }
+
+    private static TowarKodDodatkowyRaw toKodDodatkowyRaw(TowarKodDodatkowy src) {
+        TowarKodDodatkowyRaw raw = new TowarKodDodatkowyRaw();
+        raw.setKod(src.kod());
+        raw.setIleWOpak(src.ileWOpak());
+        if (src.poziomCen() != null) {
+            raw.setPoziomCen(TowarKodDodatkowyRaw.PoziomCenEnum.fromValue(src.poziomCen()));
+        }
+        return raw;
+    }
+
+    private static TowarCenaWSklepieRaw toCenaWSklepieRaw(TowarCenaWSklepie src) {
+        TowarCenaWSklepieRaw raw = new TowarCenaWSklepieRaw();
+        if (src.sklepId() != null) {
+            LinkRaw sklep = new LinkRaw();
+            sklep.setId(src.sklepId());
+            raw.setSklep(sklep);
+        }
+        raw.setCenaEw(src.cenaEw());
+        raw.setCenaDet(src.cenaDet());
+        raw.setCenaHurt(src.cenaHurt());
+        raw.setCenaNoc(src.cenaNoc());
+        raw.setCenaDod(src.cenaDod());
+        raw.setPrzySprzedazy(src.przySprzedazy());
+        return raw;
+    }
+
+    private static TowarSkladnikRaw toSkladnikRaw(TowarSkladnik src) {
+        TowarSkladnikRaw raw = new TowarSkladnikRaw();
+        raw.setNazwa(src.nazwa());
+        raw.setCena(src.cena());
+        raw.setObowiazkowy(src.obowiazkowy());
+        raw.setWyborWieluTow(src.wyborWieluTow());
+        raw.setRozneCeny(src.rozneCeny());
+        if (src.towary() != null) {
+            raw.setTowary(src.towary().stream().map(TowaryClientImpl::toSkladnikTowarRaw).toList());
+        }
+        return raw;
+    }
+
+    private static TowarSkladnikTowarRaw toSkladnikTowarRaw(TowarSkladnikTowar src) {
+        TowarSkladnikTowarRaw raw = new TowarSkladnikTowarRaw();
+        if (src.towarId() != null) {
+            LinkRaw towar = new LinkRaw();
+            towar.setId(src.towarId());
+            raw.setTowar(towar);
+        }
+        raw.setIlosc(src.ilosc());
+        raw.setCenaZKartyTow(src.cenaZKartyTow());
+        raw.setCena(src.cena());
+        raw.setDomyslny(src.domyslny());
+        return raw;
     }
 
     private static void requireNotNull(Object value, String fieldName) {
